@@ -35,7 +35,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="hidden md:flex z-50 justify-center items-center space-x-4 w-full text-sm p-2 cursor-pointer"> {/* Decreased text size to text-sm */}
+    <div className="bg-white hidden md:flex z-50 justify-center items-center space-x-4 w-full text-sm p-2 cursor-pointer"> {/* Decreased text size to text-sm */}
       {/* Static Navbar Links with Dropdowns */}
       {Object.keys(menuItems).map((category) => (
         <Dropdown
