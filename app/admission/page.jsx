@@ -94,7 +94,7 @@ function AdmissionForm() {
               </div>
               {/* Father's Name */}
               <div>
-                <label className="block text-sm font-bold mb-1 text-white" htmlFor="fathers-name">Father's Name *</label>
+                <label className="block text-sm font-bold mb-1 text-white" htmlFor="fathers-name">Father&apos;s Name *</label>
                 <input
                   type="text"
                   id="fathers-name"
@@ -105,7 +105,7 @@ function AdmissionForm() {
               </div>
               {/* Mother's Name */}
               <div>
-                <label className="block text-sm font-bold mb-1 text-white" htmlFor="mothers-name">Mother's Name *</label>
+                <label className="block text-sm font-bold mb-1 text-white" htmlFor="mothers-name">Mother&apos;s Name *</label>
                 <input
                   type="text"
                   id="mothers-name"
