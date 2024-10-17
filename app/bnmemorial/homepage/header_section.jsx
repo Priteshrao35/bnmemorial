@@ -69,12 +69,7 @@ const Header = () => {
                     size={20}
                   />
                 </Link>
-                <Link href="#">
-                  <FaXTwitter
-                    className="text-white hover:text-blue-400 cursor-pointer"
-                    size={20}
-                  />
-                </Link>
+
                 <Link href="#">
                   <FaInstagram
                     className="text-white hover:text-pink-600 cursor-pointer"
