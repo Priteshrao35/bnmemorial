@@ -197,12 +197,12 @@ function CollegeFree() {
                     <li className="text-left">{student.student_name}</li>
 
                     <li className="text-right font-medium text-gray-600">
-                      <strong>Father's Name:</strong>
+                      <strong>Father&apos;s Name:</strong>
                     </li>
                     <li className="text-left">{student.fathers_name}</li>
 
                     <li className="text-right font-medium text-gray-600">
-                      <strong>Mother's Name:</strong>
+                      <strong>Mother&apos;s Name:</strong>
                     </li>
                     <li className="text-left">{student.mothers_name}</li>
 
