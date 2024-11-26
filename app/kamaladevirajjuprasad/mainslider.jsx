@@ -30,7 +30,7 @@ export default function MainSlider() {
           disableOnInteraction: false,
         }}
         modules={[Pagination, Autoplay]}
-        className="w-full md:h-[88vh] h-[52vh] flex items-center justify-center"
+        className="w-full md:h-[80vh] h-[52vh] flex items-center justify-center"
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner.id}>

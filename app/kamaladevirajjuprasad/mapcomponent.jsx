@@ -4,7 +4,7 @@ import React from 'react';
 const ContactAndMapsPage = () => {
   return (
     <div className="md:p-5 p-2 bg-white">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         
         {/* Full Width Map Section */}
         <div className="w-full h-96 rounded-lg shadow-lg overflow-hidden">

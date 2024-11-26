@@ -4,7 +4,7 @@ import { FaConciergeBell } from 'react-icons/fa';
 
 function Noticeboard() {
   return (
-    <div className="flex flex-col md:flex-row gap-4 md:p-6 px-2 md:px-20 md:mt-2 bg-white">
+    <div className="flex flex-col md:flex-row gap-4 md:p-6 px-2 md:px-20 bg-white">
       {/* Right Side Noticeboard */}
       <div className="flex-shrink-0 w-full md:w-1/4 border-4 border-blue-400 rounded-lg text-black order-1 md:order-1 mt-3">
         <div className="flex items-left justify-left bg-blue-950 border-b-4 pl-2 border-blue-400">

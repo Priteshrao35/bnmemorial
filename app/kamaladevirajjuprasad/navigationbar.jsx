@@ -10,6 +10,8 @@ const Navbar = () => {
       { label: 'School Overview', key: '/ourschool/overview' },
       { label: 'Mission & Vision', key: '/ourschool/mission' },
       { label: 'History', key: '/ourschool/history' },
+      { label: 'Staff Registration', key: 'staff' },
+
     ],
     Admission: [
       { label: 'Admission Process', key: '/admission/process' },
