@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
@@ -7,27 +8,25 @@ import FooterSection from '../kamaladevirajjuprasad/footersections';
 
 function StaffForm() {
   const [formData, setFormData] = useState({
-    studentName: '',
-    fathersName: '',
-    mothersName: '',
-    currentSchool: '',
+    fullName: '',
+    fatherName: '',
+    motherName: '',
+    school: '',
     address: '',
-    admissionClass: '',
+    className: '',
     dob: '',
     gender: '',
     contact: '',
     pincode: '',
   });
 
-  const [error, setError] = useState(null); // Track errors
-  const [successMessage, setSuccessMessage] = useState(null); // Track success message
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Only allow numeric values for contact and pincode fields
     if (name === 'contact' || name === 'pincode') {
-      // Replace any non-numeric characters
       const numericValue = value.replace(/[^0-9]/g, '');
       setFormData({ ...formData, [name]: numericValue });
     } else {
@@ -36,20 +35,20 @@ function StaffForm() {
   };
 
   const validateForm = () => {
-    const { studentName, fathersName, mothersName, currentSchool, address, admissionClass, dob, gender, contact, pincode } = formData;
-
-    if (!studentName || !fathersName || !mothersName || !currentSchool || !address || !admissionClass || !dob || !gender || !contact || !pincode) {
-      setError('All fields marked with * are required.');
+    const requiredFields = ['fullName', 'fatherName', 'motherName', 'school', 'address', 'className', 'dob', 'gender', 'contact', 'pincode'];
+    const missingField = requiredFields.find((field) => !formData[field]);
+    if (missingField) {
+      setError('Please fill out all required fields.');
       return false;
     }
 
-    if (!/^\d+$/.test(contact)) {
-      setError('Contact number must be numeric.');
+    if (formData.contact.length !== 10) {
+      setError('Contact number must be 10 digits.');
       return false;
     }
 
-    if (!/^\d+$/.test(pincode)) {
-      setError('Pincode must be numeric.');
+    if (formData.pincode.length !== 6) {
+      setError('Pincode must be 6 digits.');
       return false;
     }
 
@@ -59,51 +58,49 @@ function StaffForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateForm()) {
-      return; // Don't submit if form validation fails
-    }
+    if (!validateForm()) return;
+
+    const dataToSend = {
+      full_name: formData.fullName,
+      father_name: formData.fatherName,
+      mother_name: formData.motherName,
+      school: formData.school,
+      address: formData.address,
+      class_name: formData.className,
+      dob: formData.dob,
+      gender: formData.gender,
+      contact: formData.contact,
+      pincode: formData.pincode,
+    };
 
     try {
-      const response = await axios.post('https://bnmemorials.pythonanywhere.com/apis/admissions/', {
-        student_name: formData.studentName,
-        fathers_name: formData.fathersName,
-        mothers_name: formData.mothersName,
-        current_school: formData.currentSchool,
-        address: formData.address,
-        admission_class: formData.admissionClass,
-        dob: formData.dob,
-        gender: formData.gender,
-        contact: formData.contact,
-        pincode: formData.pincode,
-      });
+      const response = await axios.post(
+        'https://bnmemorials.pythonanywhere.com/apis/staff/',
+        dataToSend,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       if (response.status === 201) {
-        setSuccessMessage('Your admission request has been successfully submitted.');
-        // Reset form after successful submission
+        setSuccessMessage('Staff registration submitted successfully!');
         setFormData({
-          studentName: '',
-          fathersName: '',
-          mothersName: '',
-          currentSchool: '',
+          fullName: '',
+          fatherName: '',
+          motherName: '',
+          school: '',
           address: '',
-          admissionClass: '',
+          className: '',
           dob: '',
           gender: '',
           contact: '',
           pincode: '',
         });
         setError(null);
-
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 2000); // Adjust time as needed (in milliseconds)
+        setTimeout(() => setSuccessMessage(null), 3000);
       } else {
-        alert('Submission failed. Please try again.');
+        setError('Submission failed. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting the form:', error);
-      setError('An error occurred while submitting the form. Please try again later.');
+      setError('An error occurred. Please try again later.');
     }
   };
 
@@ -111,161 +108,134 @@ function StaffForm() {
     <div>
       <Header />
       <Navbar />
-      <div className="bg-gradient-animation px-4 sm:px-8 md:px-52 bg-white">
-        <div className="py-10">
-          <h2 className="md:text-4xl text-2xl md:p-5 p-2 font-bold mb-6 text-center text-black">
-            Staff Registration
-          </h2>
+      <div className="min-h-screen bg-gradient-to-r from-blue-50 via-white to-blue-50 px-8 md:px-32 py-16">
+        <h2 className="text-3xl font-extrabold text-center text-gray-800">Staff Registration</h2>
 
-          {error && <div className="text-red-600 text-center mb-4 text-2xl">{error}</div>}
-          {successMessage && <div className="text-green-600 text-center mb-4 text-2xl">{successMessage}</div>}
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        {successMessage && <p className="text-green-500 text-center mt-4">{successMessage}</p>}
 
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5" onSubmit={handleSubmit}>
-            {/* Left Grid */}
-            <div className="space-y-6">
-              {/* Student Name */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="studentName">Full Name *</label>
-                <input
-                  type="text"
-                  id="studentName"
-                  name="studentName"
-                  value={formData.studentName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter student's name"
-                />
-              </div>
-              {/* Father's Name */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="fathersName">Father&apos;s Name *</label>
-                <input
-                  type="text"
-                  id="fathersName"
-                  name="fathersName"
-                  value={formData.fathersName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter father's name"
-                />
-              </div>
-              {/* Mother's Name */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="mothersName">Mother&apos;s Name *</label>
-                <input
-                  type="text"
-                  id="mothersName"
-                  name="mothersName"
-                  value={formData.mothersName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter mother's name"
-                />
-              </div>
-              
-              {/* Address */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="address">Address *</label>
-                <textarea
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter address"
-                ></textarea>
-              </div>
-            </div>
-
-            {/* Right Grid */}
-            <div className="space-y-6">
-              {/* Class for Admission */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="admissionClass">Class *</label>
-                <input
-                  type="text"
-                  id="admissionClass"
-                  name="admissionClass"
-                  value={formData.admissionClass}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter class for admission"
-                />
-              </div>
-              {/* Date of Birth */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="dob">Date of Birth *</label>
-                <input
-                  type="date"
-                  id="dob"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                />
-              </div>
-              {/* Gender */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="gender">Gender *</label>
-                <select
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                >
-                  <option value="">- PLEASE SELECT -</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              {/* Contact No */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="contact">Contact No. *</label>
-                <input
-                  type="tel"
-                  id="contact"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter contact number"
-                />
-              </div>
-              {/* Pincode */}
-              <div>
-                <label className="block text-sm font-bold mb-1 text-black" htmlFor="pincode">Pincode *</label>
-                <input
-                  type="text"
-                  id="pincode"
-                  name="pincode"
-                  value={formData.pincode}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-1 border rounded-md text-black"
-                  placeholder="Enter pincode"
-                />
-              </div>
-            </div>
-            <div className="text-center mt-5 flex justify-center items-center">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 w-full md:w-[30em] px-6 rounded-lg text-xl"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
+        <form className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Full Name *</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter full name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Father's Name *</label>
+            <input
+              type="text"
+              name="fatherName"
+              value={formData.fatherName}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter father's name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Mother's Name *</label>
+            <input
+              type="text"
+              name="motherName"
+              value={formData.motherName}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter mother's name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Current School *</label>
+            <input
+              type="text"
+              name="school"
+              value={formData.school}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter current school"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Class *</label>
+            <input
+              type="text"
+              name="className"
+              value={formData.className}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter class name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Date of Birth *</label>
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Gender *</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Contact *</label>
+            <input
+              type="tel"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter contact number"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Pincode *</label>
+            <input
+              type="text"
+              name="pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter pincode"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Address *</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Enter address"
+            />
+          </div>
+          <div className="md:col-span-2 text-center">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 shadow-lg"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
       <FooterSection />
     </div>

@@ -1,8 +1,32 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaConciergeBell } from 'react-icons/fa';
 
 function Noticeboard() {
+  const [notices, setNotices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch notices from the API
+    const fetchNotices = async () => {
+      try {
+        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/notices/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch notices');
+        }
+        const data = await response.json();
+        setNotices(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
   return (
     <div className="flex flex-col md:flex-row gap-4 md:p-6 px-2 md:px-20 bg-white">
       {/* Right Side Noticeboard */}
@@ -12,13 +36,21 @@ function Noticeboard() {
           <h3 className="text-center text-white text-lg font-semibold pl-2">Notice Board</h3>
         </div>
         <div className="overflow-hidden h-80 relative notice-marquee-container">
-          {/* Marquee effect */}
-          <div className="notice-marquee space-y-4 text-sm absolute p-5 text-blue-700">
-            <p>Notice 1: School will be closed on Monday.</p>
-            <p>Notice 2: Parent-teacher meeting scheduled for Friday.</p>
-            <p>Notice 3: Annual sports day registration is open now.</p>
-            <p>Notice 4: Exams will start from 10th October.</p>
-          </div>
+          {loading && <p className="p-5 text-blue-700">Loading notices...</p>}
+          {error && <p className="p-5 text-red-700">{error}</p>}
+          {!loading && !error && (
+            <div className="notice-marquee space-y-4 text-sm absolute p-5 text-blue-700">
+              {notices.length > 0 ? (
+                notices.map((notice) => (
+                  <p key={notice.id}>
+                    <strong>{notice.title}:</strong> {notice.description}
+                  </p>
+                ))
+              ) : (
+                <p className="p-5 text-blue-700">No notices available</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

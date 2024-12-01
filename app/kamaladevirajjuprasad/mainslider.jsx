@@ -1,20 +1,20 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import { Pagination, Autoplay } from "swiper/modules";
+import axios from "axios";
 
 export default function MainSlider() {
-  const banners = [
-    { id: 1, Main_Banner: "/01.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-    { id: 2, Main_Banner: "/02.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-    { id: 3, Main_Banner: "/03.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-    { id: 4, Main_Banner: "/04.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-    { id: 5, Main_Banner: "/5.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-    { id: 6, Main_Banner: "/6.jpg", Main_Banner_For_Mobile: "/20240922_095413.jpg" },
-  ];
+  const [banners, setBanners] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://bnmemorials.pythonanywhere.com/apis/banners/")
+      .then((response) => setBanners(response.data))
+      .catch((error) => console.error("Error fetching banners:", error));
+  }, []);
 
   return (
     <div className="overflow-hidden">
@@ -30,23 +30,16 @@ export default function MainSlider() {
           disableOnInteraction: false,
         }}
         modules={[Pagination, Autoplay]}
-        className="w-full md:h-[80vh] h-[52vh] flex items-center justify-center"
+        className="w-full md:h-[80vh] h-[22vh] flex items-center justify-center"
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner.id}>
             <div className="transform transition-transform duration-300 hover:scale-110">
-              {/* Image for default screen */}
+              {/* Corrected image key */}
               <img
-                src={banner.Main_Banner}
+                src={banner.main_banner}
                 alt={`Slide ${banner.id}`}
-                className="max-w-full max-h-full object-contain hidden md:block"
-              />
-
-              {/* Image for mobile */}
-              <img
-                src={banner.Main_Banner_For_Mobile}
-                alt={`Slide ${banner.id}`}
-                className="max-w-full object-cover md:hidden"
+                className="max-w-full max-h-full object-contain"
               />
             </div>
           </SwiperSlide>
