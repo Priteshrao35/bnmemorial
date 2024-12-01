@@ -127,7 +127,7 @@ function StaffForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700">Father's Name *</label>
+            <label className="block text-sm font-bold text-gray-700">Father&apos;s Name *</label>
             <input
               type="text"
               name="fatherName"
@@ -138,7 +138,7 @@ function StaffForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700">Mother's Name *</label>
+            <label className="block text-sm font-bold text-gray-700">Mother&apos;s Name *</label>
             <input
               type="text"
               name="motherName"
