@@ -10,6 +10,7 @@ const Navbar = () => {
       { label: 'School Overview', key: '/ourschool/overview' },
       { label: 'Mission & Vision', key: '/ourschool/mission' },
       { label: 'History', key: '/ourschool/history' },
+      { label: 'Staff Registration', key: 'staff' },
     ],
     Admission: [
       { label: 'Admission Process', key: '/admission/process' },
@@ -67,10 +68,10 @@ const Navbar = () => {
       <Link href="/blogs" className="text-black font-bold hover:text-blue-500">
         Blogs
       </Link>
-      <Link href="/aboutus" className="text-black font-bold hover:text-blue-500"> 
+      <Link href="/aboutus" className="text-black font-bold hover:text-blue-500">
         About Us
       </Link>
-      <Link href="/careers" className="text-black font-bold hover:text-blue-500"> 
+      <Link href="/careers" className="text-black font-bold hover:text-blue-500">
         Careers
       </Link>
       <Link href="/contactus" className="text-black font-bold hover:text-blue-500">
