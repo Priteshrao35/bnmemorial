@@ -1,9 +1,35 @@
-// pages/meet-our-staff.js
-
+'use client'
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 const MeetOurStaff = () => {
+  const [staffMembers, setStaffMembers] = useState([]); // State to store API data
+  const [loading, setLoading] = useState(true); // Loading state
+
+  // Fetch staff data from the API
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/staff/');
+        const data = await response.json();
+        const category1Staff = data.filter(staff => staff.category === 1); // Filter data with category 1
+        setStaffMembers(category1Staff); // Set filtered staff data
+      } catch (error) {
+        console.error("Error fetching staff data: ", error);
+      } finally {
+        setLoading(false); // Stop loading once data is fetched
+      }
+    };
+
+    fetchStaffData();
+  }, []); // Empty dependency array means this effect runs only once when the component mounts
+
+  // Render loading message if data is still being fetched
+  if (loading) {
+    return <div className="text-center text-white">Loading...</div>;
+  }
+
   return (
     <div className="bg-white">
       <section className="py-10">
@@ -32,8 +58,8 @@ const StaffCard = ({ staff }) => {
       <div className="relative w-full mb-6 group">
         <a href={staff.profileLink}>
           <Image
-            src={staff.image}
-            alt={staff.name}
+            src={staff.Profile_Pic || "/staff-1.jpg"} // Use default image if no profile picture
+            alt={staff.full_name}
             width={240}
             height={240}
             className="object-cover rounded-lg transition-transform duration-300 hover:scale-105 sm:w-32 sm:h-32 md:w-60 md:h-60"
@@ -43,7 +69,7 @@ const StaffCard = ({ staff }) => {
         {/* Icons container */}
         <div className="absolute inset-x-0 bottom-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-1 rounded-b-lg shadow-lg">
           <div className="flex space-x-2">
-            {staff.socialLinks.map((link, index) => (
+            {staff.socialLinks && staff.socialLinks.map((link, index) => (
               <a key={index} href={link.url} className={`p-2 rounded-full ${link.bgColor}`} target="_blank" rel="noopener noreferrer">
                 {link.icon}
               </a>
@@ -60,63 +86,11 @@ const StaffCard = ({ staff }) => {
         </a>
       </div>
       <div className="text-center">
-        <h5 className="mb-2 text-lg font-bold text-blue-950">{staff.name}</h5>
+        <h5 className="mb-2 text-lg font-bold text-blue-950">{staff.full_name}</h5>
         <p className="text-sm text-gray-600 font-bold">{staff.position}</p>
       </div>
     </div>
   );
 };
-
-// Sample data for staff members
-const staffMembers = [
-  {
-    name: 'Broklyn Doel',
-    position: 'Sains Teacher',
-    image: '/staff-1.jpg',
-    profileLink: '/profile/kidba/?view=instructor',
-    socialLinks: [
-      { url: 'https://www.facebook.com', icon: <FaFacebook className="text-white" />, bgColor: 'bg-blue-600' },
-      { url: 'https://twitter.com', icon: <FaTwitter className="text-white" />, bgColor: 'bg-blue-400' },
-      { url: 'https://www.instagram.com', icon: <FaInstagram className="text-white" />, bgColor: 'bg-pink-500' },
-      { url: 'https://wa.me/1234567890', icon: <FaWhatsapp className="text-white" />, bgColor: 'bg-green-500' },
-    ],
-  },
-  {
-    name: 'Alex Jhonson',
-    position: 'Art Teacher',
-    image: '/staff-1.jpg',
-    profileLink: '/profile/kidba/?view=instructor',
-    socialLinks: [
-      { url: 'https://www.facebook.com', icon: <FaFacebook className="text-white" />, bgColor: 'bg-blue-600' },
-      { url: 'https://twitter.com', icon: <FaTwitter className="text-white" />, bgColor: 'bg-blue-400' },
-      { url: 'https://www.instagram.com', icon: <FaInstagram className="text-white" />, bgColor: 'bg-pink-500' },
-      { url: 'https://wa.me/1234567890', icon: <FaWhatsapp className="text-white" />, bgColor: 'bg-green-500' },
-    ],
-  },
-  {
-    name: 'Janaton Doe',
-    position: 'English Teacher',
-    image: '/staff-1.jpg',
-    profileLink: '/profile/kidba/?view=instructor',
-    socialLinks: [
-      { url: 'https://www.facebook.com', icon: <FaFacebook className="text-white" />, bgColor: 'bg-blue-600' },
-      { url: 'https://twitter.com', icon: <FaTwitter className="text-white" />, bgColor: 'bg-blue-400' },
-      { url: 'https://www.instagram.com', icon: <FaInstagram className="text-white" />, bgColor: 'bg-pink-500' },
-      { url: 'https://wa.me/1234567890', icon: <FaWhatsapp className="text-white" />, bgColor: 'bg-green-500' },
-    ],
-  },
-  {
-    name: 'Robot Jhonson',
-    position: 'Math Teacher',
-    image: '/staff-1.jpg',
-    profileLink: '/profile/kidba/?view=instructor',
-    socialLinks: [
-      { url: 'https://www.facebook.com', icon: <FaFacebook className="text-white" />, bgColor: 'bg-blue-600' },
-      { url: 'https://twitter.com', icon: <FaTwitter className="text-white" />, bgColor: 'bg-blue-400' },
-      { url: 'https://www.instagram.com', icon: <FaInstagram className="text-white" />, bgColor: 'bg-pink-500' },
-      { url: 'https://wa.me/1234567890', icon: <FaWhatsapp className="text-white" />, bgColor: 'bg-green-500' },
-    ],
-  },
-];
 
 export default MeetOurStaff;
