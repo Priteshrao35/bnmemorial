@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import React, { useState } from 'react';
 import axios from 'axios';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
@@ -9,46 +8,43 @@ import FooterSection from '../kamaladevirajjuprasad/footersections';
 function StaffForm() {
   const [formData, setFormData] = useState({
     fullName: '',
-    fatherName: '',
-    motherName: '',
-    school: '',
-    address: '',
     className: '',
     dob: '',
     gender: '',
     contact: '',
     pincode: '',
+    address: '',
+    profilePic: null, // Added profilePic state
   });
 
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
 
-    if (name === 'contact' || name === 'pincode') {
-      const numericValue = value.replace(/[^0-9]/g, '');
-      setFormData({ ...formData, [name]: numericValue });
+    if (type === 'file') {
+      setFormData({ ...formData, profilePic: files[0] }); // Handle file input
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
   const validateForm = () => {
-    const requiredFields = ['fullName', 'fatherName', 'motherName', 'school', 'address', 'className', 'dob', 'gender', 'contact', 'pincode'];
+    const requiredFields = ['fullName', 'className', 'dob', 'gender', 'contact', 'pincode', 'address'];
     const missingField = requiredFields.find((field) => !formData[field]);
     if (missingField) {
       setError('Please fill out all required fields.');
       return false;
     }
 
-    if (formData.contact.length !== 10) {
-      setError('Contact number must be 10 digits.');
+    if (!/^\d{10}$/.test(formData.contact)) {
+      setError('Contact number must be exactly 10 digits.');
       return false;
     }
 
-    if (formData.pincode.length !== 6) {
-      setError('Pincode must be 6 digits.');
+    if (!/^\d{6}$/.test(formData.pincode)) {
+      setError('Pincode must be exactly 6 digits.');
       return false;
     }
 
@@ -60,39 +56,41 @@ function StaffForm() {
 
     if (!validateForm()) return;
 
-    const dataToSend = {
-      full_name: formData.fullName,
-      father_name: formData.fatherName,
-      mother_name: formData.motherName,
-      school: formData.school,
-      address: formData.address,
-      class_name: formData.className,
-      dob: formData.dob,
-      gender: formData.gender,
-      contact: formData.contact,
-      pincode: formData.pincode,
-    };
+    // Select category based on class name
+    const categoryId = parseInt(formData.className) <= 8 ? 2 : 1;
+
+    const dataToSend = new FormData();
+    dataToSend.append('full_name', formData.fullName);
+    dataToSend.append('class_name', formData.className);
+    dataToSend.append('dob', formData.dob);
+    dataToSend.append('gender', formData.gender);
+    dataToSend.append('contact', formData.contact);
+    dataToSend.append('pincode', formData.pincode);
+    dataToSend.append('address', formData.address);
+    dataToSend.append('category', categoryId);
+
+    if (formData.profilePic) {
+      dataToSend.append('Profile_Pic', formData.profilePic); // Make sure the key is 'Profile_Pic'
+    }
 
     try {
       const response = await axios.post(
         'https://bnmemorials.pythonanywhere.com/apis/staff/',
         dataToSend,
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       if (response.status === 201) {
         setSuccessMessage('Staff registration submitted successfully!');
         setFormData({
           fullName: '',
-          fatherName: '',
-          motherName: '',
-          school: '',
-          address: '',
           className: '',
           dob: '',
           gender: '',
           contact: '',
           pincode: '',
+          address: '',
+          profilePic: null,
         });
         setError(null);
         setTimeout(() => setSuccessMessage(null), 3000);
@@ -103,6 +101,7 @@ function StaffForm() {
       setError('An error occurred. Please try again later.');
     }
   };
+
 
   return (
     <div>
@@ -124,39 +123,6 @@ function StaffForm() {
               onChange={handleChange}
               className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
               placeholder="Enter full name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700">Father&apos;s Name *</label>
-            <input
-              type="text"
-              name="fatherName"
-              value={formData.fatherName}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter father's name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700">Mother&apos;s Name *</label>
-            <input
-              type="text"
-              name="motherName"
-              value={formData.motherName}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter mother's name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700">Current School *</label>
-            <input
-              type="text"
-              name="school"
-              value={formData.school}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter current school"
             />
           </div>
           <div>
@@ -218,13 +184,21 @@ function StaffForm() {
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700">Address *</label>
-            <input
-              type="text"
+            <textarea
               name="address"
               value={formData.address}
               onChange={handleChange}
               className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
               placeholder="Enter address"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700">Profile Picture</label>
+            <input
+              type="file"
+              name="profilePic"
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
             />
           </div>
           <div className="md:col-span-2 text-center">

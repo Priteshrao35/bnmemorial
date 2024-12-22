@@ -6,13 +6,21 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import { Pagination, Autoplay } from "swiper/modules";
 import axios from "axios";
+import Link from "next/link";
 
 export default function MainSlider() {
   const [banners, setBanners] = useState([]);
 
   useEffect(() => {
-    axios.get("https://bnmemorials.pythonanywhere.com/apis/banners/")
-      .then((response) => setBanners(response.data))
+    axios
+      .get("https://bnmemorials.pythonanywhere.com/apis/banners/")
+      .then((response) => {
+        // Filter banners by category_name
+        const filteredBanners = response.data.filter(
+          (banner) => banner.category_name === "KAMALA DEVI RAJJU PRASAD"
+        );
+        setBanners(filteredBanners);
+      })
       .catch((error) => console.error("Error fetching banners:", error));
   }, []);
 
@@ -37,7 +45,7 @@ export default function MainSlider() {
             <div className="transform transition-transform duration-300 hover:scale-110">
               {/* Corrected image key */}
               <img
-                src={banner.main_banner}
+                src={banner.Main_Baner_Image}
                 alt={`Slide ${banner.id}`}
                 className="max-w-full max-h-full object-contain"
               />
@@ -60,10 +68,13 @@ export default function MainSlider() {
 
         {/* Right: Button */}
         <div className="text-right">
-          <button className="bg-blue-500 text-sm md:text-xl text-white px-4 md:px-6 py-2 md:py-3 rounded-lg shadow hover:bg-blue-600 transition duration-300">
-            Online Registration
-          </button>
+          <Link href="/admission" passHref>
+            <button className="bg-blue-500 text-sm md:text-xl text-white px-4 md:px-6 py-2 md:py-3 rounded-lg shadow hover:bg-blue-600 transition duration-300">
+              Online Registration
+            </button>
+          </Link>
         </div>
+
       </div>
     </div>
   );

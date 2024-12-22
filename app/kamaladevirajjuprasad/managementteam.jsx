@@ -1,44 +1,39 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 
-const curriculumData = [
-  {
-    image: "/team-2.jpg",
-    title: "Pre-Primary Section",
-    desination: `Principal`,
-    description: `We believe in a well-rounded education, and hence, our curriculum includes creative arts and sports to nurture students' talents and interests.`,
-  },
-  {
-    image: "/team-2.jpg",
-    title: "Primary / Junior Section",
-    desination: `Principal`,
-    description: `We believe in a well-rounded education, and hence, our curriculum includes creative arts and sports to nurture students' talents and interests.`,
-  },
-  {
-    image: "/team-2.jpg",
-    title: "Sr. Secondary Section",
-    desination: `Principal`,
-    description: `We believe in a well-rounded education, and hence, our curriculum includes creative arts and sports to nurture students' talents and interests.`,
-  },
-  {
-    image: "/team-2.jpg",
-    title: "Additional Subject (Optional)",
-    desination: `Principal`,
-    description: `We believe in a well-rounded education, and hence, our curriculum includes creative arts and sports to nurture students' talents and interests.`,
-  },
-  {
-    image: "/team-2.jpg",
-    title: "Creative Arts and Sports",
-    desination: `Principal`,
-    description: `We believe in a well-rounded education, and hence, our curriculum includes creative arts and sports to nurture students' talents and interests.`,
-  },
-];
-
 export default function ManagementTeam() {
+  const [staffData, setStaffData] = useState([]); // State to store API data
+  const [loading, setLoading] = useState(true); // State to handle loading state
+
+  // Fetch staff data from the API
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/staff/');
+        const data = await response.json();
+        setStaffData(data); // Set the fetched data to state
+      } catch (error) {
+        console.error("Error fetching staff data: ", error);
+      } finally {
+        setLoading(false); // Stop loading once data is fetched
+      }
+    };
+
+    fetchStaffData();
+  }, []); // Empty dependency array means this effect runs once when the component mounts
+
+  // Filter data to show only category 1
+  const filteredStaffData = staffData.filter(item => item.category === 2);
+
+  // Render loading message if data is still being fetched
+  if (loading) {
+    return <div className="text-center text-white">Loading...</div>;
+  }
+
   return (
     <div className="mx-auto p-4 bg-blue-950 px-4 sm:px-10 lg:px-40"> {/* Adjusted padding for mobile */}
       <h2 className="md:text-4xl text-2xl font-bold text-center mb-6 text-white mt-5">Our Management Team</h2>
@@ -65,27 +60,27 @@ export default function ManagementTeam() {
           },
         }}
       >
-        {curriculumData.map((item, index) => (
+        {filteredStaffData.map((item) => (
           <SwiperSlide
-            key={index}
+            key={item.id}
             className="flex flex-col items-center bg-white relative group h-60 transition-all duration-300 ease-in-out transform hover:bg-blue-500 rounded-lg" // Added rounded-lg for border radius
           >
             <div className="overflow-hidden w-full h-[15em] relative mb-4">
               <img
-                src={item.image}
-                alt={item.title}
+                src={item.Profile_Pic || "/team-2.jpg"} // Use default image if no profile picture
+                alt={item.full_name}
                 className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105" // Keep rounded corners on image
               />
             </div>
             <div className="px-3 flex-grow flex flex-col items-center justify-center">
               <h3 className="text-xl font-semibold text-blue-900 text-center group-hover:text-white"> {/* Change text color on hover */}
-                {item.title}
+                {item.full_name}
               </h3>
               <p className="text-blue-400 font-bold text-center group-hover:text-white"> {/* Change text color on hover */}
-                {item.desination}
+                {item.category} {/* Display category */}
               </p>
               <p className="text-black p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white text-center"> {/* Show description and change text color on hover */}
-                {item.description}
+                {item.address}
               </p>
             </div>
           </SwiperSlide>
