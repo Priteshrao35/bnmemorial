@@ -1,83 +1,35 @@
 'use client';
-import React from 'react';
-
-const facilitiesData = [
-    {
-      image: "/amphitheatre.png",
-      title: "OPEN AMPHITHEATRE",
-    },
-    {
-      image: "/smart-classrooms.png",
-      title: "SMART CLASSROOMS",
-    },
-    {
-      image: "/school-bus.png",
-      title: "TRANSPORT FACILITY",
-    },
-    {
-      image: "/computer-lab.png",
-      title: "COMPUTER LAB",
-    },
-    {
-      image: "/school-cinem.png",
-      title: "SCHOOL CINEMA",
-    },
-    {
-      image: "/Library.png",
-      title: "LIBRARY",
-    },
-    {
-      image: "/science-lab.png",
-      title: "SCIENCE LABS",
-    },
-    {
-      image: "/Math.png",
-      title: "MATHS LABS",
-    },
-    {
-      image: "/languages-lab.png",
-      title: "LANGUAGE LAB",
-    },
-    {
-      image: "/Art.png",
-      title: "ARTS STUDIO",
-    },
-    {
-      image: "/Infirmary.png",
-      title: "INFIRMARY",
-    },
-    {
-      image: "/student-safety.png",
-      title: "STUDENT SAFETY",
-    },
-    {
-      image: "/skill-program.png",
-      title: "SKILL PROGRAM",
-    },
-    {
-      image: "/sports.png",
-      title: "SPORTS FACILITY",
-    },
-    {
-      image: "/sports-complex.png",
-      title: "INDOOR SPORTS COMPLEX",
-    },
-    {
-      image: "/music-and-dance.png",
-      title: "MUSIC & DANCE STUDIO",
-    },
-  ];
+import React, { useEffect, useState } from 'react';
 
 export default function OurFacilities() {
+  // State to hold the facilities data
+  const [facilitiesData, setFacilitiesData] = useState([]);
+
+  // Fetch the facilities data from the API
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/facilities/');
+        const data = await response.json();
+        setFacilitiesData(data); // Set the data to the state
+      } catch (error) {
+        console.error('Error fetching facilities data:', error);
+      }
+    };
+    fetchFacilities();
+  }, []); // Empty dependency array means this runs only once when the component mounts
+
   return (
     <div className="p-4 py-20 bg-white">
       <h2 className="text-4xl font-bold text-center mb-6 text-black">Our Facilities</h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-6 justify-items-center">
+        {/* Map through the fetched facilitiesData */}
         {facilitiesData.map((facility, index) => (
           <div key={index} className="relative group flex flex-col items-center">
             <div className="overflow-hidden w-20 h-20">
+              {/* Display image from API */}
               <img
-                src={facility.image}
+                src={facility.image} // Use the image URL from the API response
                 alt={facility.title}
                 className="w-full h-full object-cover transition-transform duration-300 transform group-hover:scale-110 group-hover:rotate-y"
               />

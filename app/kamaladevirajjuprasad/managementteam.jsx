@@ -1,33 +1,30 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 
 export default function ManagementTeam() {
-  const [staffData, setStaffData] = useState([]); // State to store API data
+  const [managementData, setManagementData] = useState([]); // State to store API data
   const [loading, setLoading] = useState(true); // State to handle loading state
 
-  // Fetch staff data from the API
+  // Fetch management data from the API
   useEffect(() => {
-    const fetchStaffData = async () => {
+    const fetchManagementData = async () => {
       try {
-        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/staff/');
+        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/ourmanagement/');
         const data = await response.json();
-        setStaffData(data); // Set the fetched data to state
+        setManagementData(data); // Set the fetched data to state
       } catch (error) {
-        console.error("Error fetching staff data: ", error);
+        console.error("Error fetching management data: ", error);
       } finally {
         setLoading(false); // Stop loading once data is fetched
       }
     };
 
-    fetchStaffData();
+    fetchManagementData();
   }, []); // Empty dependency array means this effect runs once when the component mounts
-
-  // Filter data to show only category 1
-  const filteredStaffData = staffData.filter(item => item.category === 2);
 
   // Render loading message if data is still being fetched
   if (loading) {
@@ -60,27 +57,28 @@ export default function ManagementTeam() {
           },
         }}
       >
-        {filteredStaffData.map((item) => (
+        {managementData.map((item) => (
           <SwiperSlide
             key={item.id}
-            className="flex flex-col items-center bg-white relative group h-60 transition-all duration-300 ease-in-out transform hover:bg-blue-500 rounded-lg" // Added rounded-lg for border radius
+            className="flex flex-col items-center bg-white relative group h-60 transition-all duration-300 ease-in-out transform hover:bg-blue-500 rounded-lg"
           >
             <div className="overflow-hidden w-full h-[15em] relative mb-4">
               <img
-                src={item.Profile_Pic || "/team-2.jpg"} // Use default image if no profile picture
-                alt={item.full_name}
-                className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105" // Keep rounded corners on image
+                src={item.image || "/team-2.jpg"} // Use default image if no profile picture
+                alt={item.title}
+                className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div className="px-3 flex-grow flex flex-col items-center justify-center">
-              <h3 className="text-xl font-semibold text-blue-900 text-center group-hover:text-white"> {/* Change text color on hover */}
-                {item.full_name}
+              <h3 className="text-xl font-semibold text-blue-900 text-center group-hover:text-white">
+                {item.title}
               </h3>
-              <p className="text-blue-400 font-bold text-center group-hover:text-white"> {/* Change text color on hover */}
-                {item.category} {/* Display category */}
+              <p className="text-blue-400 font-bold text-center group-hover:text-white">
+                {/* This can be updated to show relevant information */}
+                {item.description ? item.description.substring(0, 50) + '...' : 'No Description'}
               </p>
-              <p className="text-black p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white text-center"> {/* Show description and change text color on hover */}
-                {item.address}
+              <p className="text-black p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white text-center">
+                {item.description}
               </p>
             </div>
           </SwiperSlide>

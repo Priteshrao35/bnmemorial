@@ -6,6 +6,8 @@ import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 const MeetOurStaff = () => {
   const [staffMembers, setStaffMembers] = useState([]); // State to store API data
   const [loading, setLoading] = useState(true); // Loading state
+  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
+  const staffPerPage = 8; // Number of staff members per page
 
   // Fetch staff data from the API
   useEffect(() => {
@@ -25,6 +27,14 @@ const MeetOurStaff = () => {
     fetchStaffData();
   }, []); // Empty dependency array means this effect runs only once when the component mounts
 
+  // Calculate the indexes for pagination
+  const indexOfLastStaff = currentPage * staffPerPage;
+  const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
+  const currentStaff = staffMembers.slice(indexOfFirstStaff, indexOfLastStaff);
+
+  // Handle page change
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   // Render loading message if data is still being fetched
   if (loading) {
     return <div className="text-center text-white">Loading...</div>;
@@ -41,13 +51,31 @@ const MeetOurStaff = () => {
         </div>
       </section>
 
-      <section className="container mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-center">
-          {staffMembers.map((staff, index) => (
+      <section className="container mx-auto md:px-20">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 justify-center">
+          {currentStaff.map((staff, index) => (
             <StaffCard key={index} staff={staff} />
           ))}
         </div>
       </section>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg mr-4 disabled:bg-gray-300"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage * staffPerPage >= staffMembers.length}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
@@ -88,6 +116,13 @@ const StaffCard = ({ staff }) => {
       <div className="text-center">
         <h5 className="mb-2 text-lg font-bold text-blue-950">{staff.full_name}</h5>
         <p className="text-sm text-gray-600 font-bold">{staff.position}</p>
+
+        {/* Display additional staff details */}
+        <div className="mt-4 text-sm text-gray-700">
+          <p><strong>Degree:</strong> {staff.degree}</p>
+          <p><strong>Specialization:</strong> {staff.specialization}</p>
+          <p><strong>Class:</strong> {staff.class_name}</p>
+        </div>
       </div>
     </div>
   );

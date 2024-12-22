@@ -10,6 +10,7 @@ import Noticeboard from "./kamaladevirajjuprasad/noticeboard";
 import Curriculum from "./kamaladevirajjuprasad/ourcurriculum";
 import OurFacilities from "./kamaladevirajjuprasad/ourfacilities";
 import WhyWeAreDifferentPage from "./kamaladevirajjuprasad/whywedredifferent";
+import OurTeam from "./kamaladevirajjuprasad/ourteam";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
       <ManagementTeam />
       <BNMAkarePage />
       <WhyWeAreDifferentPage />
+      <OurTeam />
       <ContactAndMapsPage />
       <FooterSections />
     </div>
