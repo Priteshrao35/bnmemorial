@@ -27,7 +27,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-white">
+      <header className="fixed w-full bg-white z-50">
         <div className="mx-auto hidden md:block">
           {/* Top row: Contact Info (left) and Buttons (right) */}
           <div className="flex justify-between items-center bg-blue-950 md:px-20">
@@ -63,7 +63,7 @@ const Header = () => {
                 </a>
               </div>
               <div className="md:flex space-x-5 hidden">
-                <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
+                <Link href="">
                   <FaFacebook
                     className="text-white hover:text-blue-600 cursor-pointer"
                     size={20}
@@ -81,7 +81,7 @@ const Header = () => {
                     size={20}
                   />
                 </Link>
-                <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
+                <Link href="">
                   <FaLinkedin
                     className="text-white hover:text-blue-700 cursor-pointer"
                     size={20}
@@ -116,9 +116,7 @@ const Header = () => {
 
         {/* Mobile Header */}
         <div className="md:hidden flex justify-between items-center p-2 bg-blue-950">
-          {/* Hamburger Icon on the left */}
           <FaBars className="text-white text-2xl cursor-pointer" onClick={showDrawer} />
-
           <div className="flex items-center space-x-1">
             <p
               className="text-yellow-500 animate-blink hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
@@ -132,14 +130,13 @@ const Header = () => {
             >
               Pay College Fees
             </p>
-            
           </div>
         </div>
         <hr />
 
         <div className="md:hidden flex justify-between items-center p-2 bg-blue-950">
           <div className="flex items-center space-x-4">
-          <p
+            <p
               className="text-white hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
               onClick={() => router.push("/bnmemorial")}
             >
@@ -154,18 +151,11 @@ const Header = () => {
             >
               kdrpintercollage@gmail.com
             </a>
-            
-            
           </div>
         </div>
 
         {/* Mobile Drawer */}
-        <Drawer
-          title="Menu"
-          placement="left"
-          onClose={onClose}
-          open={open}
-        >
+        <Drawer title="Menu" placement="left" onClose={onClose} open={open}>
           <div className="flex flex-col space-y-4">
             <Link href="/" onClick={onClose}>
               Home
@@ -209,7 +199,6 @@ const Header = () => {
         </Drawer>
       </header>
 
-      {/* Inline CSS for blinking animation */}
       <style jsx>{`
         @keyframes blink {
           0%, 100% {

@@ -25,7 +25,7 @@ export default function MainSlider() {
   }, []);
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden md:pt-20">
       {/* Swiper Section */}
       <Swiper
         direction="vertical"

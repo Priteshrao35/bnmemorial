@@ -7,37 +7,37 @@ const Navbar = () => {
   // Static menu items
   const menuItems = {
     OurSchool: [
-      { label: 'School Overview', key: '/ourschool/overview' },
-      { label: 'Mission & Vision', key: '/ourschool/mission' },
-      { label: 'History', key: '/ourschool/history' },
+      { label: 'School Overview', key: '' },
+      { label: 'Mission & Vision', key: '' },
+      { label: 'History', key: '' },
       { label: 'Staff Registration', key: 'staff' },
 
     ],
     Admission: [
-      { label: 'Admission Process', key: '/admission/process' },
-      { label: 'Requirements', key: '/admission/requirements' },
-      { label: 'Fee Structure', key: '/admission/fees' },
+      { label: 'Admission Process', key: 'admission' },
+      { label: 'Requirements', key: '' },
+      { label: 'Fee Structure', key: 'collegefee' },
     ],
     OurCampus: [
-      { label: 'Campus Facilities', key: '/ourcampus/facilities' },
-      { label: 'Virtual Tour', key: '/ourcampus/tour' },
+      { label: 'Campus Facilities', key: '' },
+      { label: 'Virtual Tour', key: '' },
     ],
     OurCurriculum: [
-      { label: 'Curriculum Overview', key: '/ourcurriculum/overview' },
-      { label: 'Extra-Curricular Activities', key: '/ourcurriculum/activities' },
+      { label: 'Curriculum Overview', key: '' },
+      { label: 'Extra-Curricular Activities', key: '' },
     ],
     ForParents: [
-      { label: 'Parent Portal', key: '/forparents/portal' },
-      { label: 'Resources for Parents', key: '/forparents/resources' },
+      { label: 'Parent Portal', key: '' },
+      { label: 'Resources for Parents', key: '' },
     ],
     ForStudents: [
-      { label: 'Student Portal', key: '/forstudents/portal' },
-      { label: 'Study Materials', key: '/forstudents/materials' },
+      { label: 'Student Portal', key: '' },
+      { label: 'Study Materials', key: '' },
     ],
   };
 
   return (
-    <div className="hidden md:flex z-50 justify-center items-center space-x-4 w-full text-sm p-2 cursor-pointer bg-white"> {/* Decreased text size to text-sm */}
+    <div className="hidden fixed md:mt-14 md:flex z-50 justify-center items-center space-x-4 w-full text-sm p-2 cursor-pointer bg-white"> {/* Decreased text size to text-sm */}
       {/* Static Navbar Links with Dropdowns */}
       {Object.keys(menuItems).map((category) => (
         <Dropdown
@@ -63,19 +63,19 @@ const Navbar = () => {
       ))}
 
       {/* Static Links */}
-      <Link href="/portfolio" className="text-black font-bold hover:text-blue-500">
+      <Link href="" className="text-black font-bold hover:text-blue-500">
         Portfolio
       </Link>
-      <Link href="/blogs" className="text-black font-bold hover:text-blue-500">
+      <Link href="" className="text-black font-bold hover:text-blue-500">
         Blogs
       </Link>
-      <Link href="/aboutus" className="text-black font-bold hover:text-blue-500"> 
+      <Link href="" className="text-black font-bold hover:text-blue-500"> 
         About Us
       </Link>
-      <Link href="/careers" className="text-black font-bold hover:text-blue-500"> 
+      <Link href="" className="text-black font-bold hover:text-blue-500"> 
         Careers
       </Link>
-      <Link href="/contactus" className="text-black font-bold hover:text-blue-500">
+      <Link href="" className="text-black font-bold hover:text-blue-500">
         Contacts
       </Link>
     </div>

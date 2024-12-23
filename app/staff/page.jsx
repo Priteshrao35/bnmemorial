@@ -116,7 +116,7 @@ function StaffForm() {
     <div>
       <Header />
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 px-8 md:px-32 py-16">
+      <div className="min-h-screen md:pt-28 bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 px-8 md:px-32 py-16">
         <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
           <h2 className="text-4xl font-semibold text-center text-blue-600 mb-8">Staff Registration</h2>
 

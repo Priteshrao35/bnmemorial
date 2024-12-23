@@ -119,7 +119,7 @@ function AdmissionForm() {
     <div>
       <Header />
       <Navbar />
-      <div className="bg-gradient-to-r from-blue-500 to-blue-300 py-12 px-6 sm:px-8 md:px-16">
+      <div className="bg-gradient-to-r from-blue-500 to-blue-300 py-12 px-6 md:pt-28 sm:px-8 md:px-16">
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-center text-black mb-6">Online Admission & Registration</h2>
 
