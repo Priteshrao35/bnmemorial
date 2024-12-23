@@ -3,7 +3,7 @@ import React from 'react';
 
 const WelcomeSection = () => {
   return (
-    <section className="md:my-10 bg-white">
+    <section className=" bg-white">
       <div className="flex flex-wrap justify-center">
         {/* Right Column (Image) */}
         <div className="w-full md:w-1/4 order-1 md:order-2">

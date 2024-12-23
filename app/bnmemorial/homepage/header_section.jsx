@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Image, Drawer } from "antd"; 
+import { Image, Drawer } from "antd";
 import {
   FaFacebook,
   FaInstagram,
@@ -9,7 +9,7 @@ import {
   FaPhone,
   FaEnvelope,
   FaBars,
-} from "react-icons/fa"; 
+} from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
@@ -27,80 +27,65 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-white">
-        <div className="mx-auto hidden md:block">
-          {/* Top row: Contact Info (left) and Buttons (right) */}
-          <div className="flex justify-between items-center bg-blue-950 md:px-20">
-            {/* Left: Contact Info and Social Icons */}
-            <div className="flex space-x-4 items-center">
+      <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
+        {/* Desktop Header */}
+        <div className="hidden md:block w-full">
+          <div className="flex justify-between items-center bg-blue-950 px-5 lg:px-20">
+            {/* Left Section: Logo and Contact Info */}
+            <div className="flex items-center space-x-4">
               <Link href="/">
-                <div className="cursor-pointer" style={{ width: '60px', height: '60px' }}>
+                <div className="cursor-pointer" style={{ width: "60px", height: "60px" }}>
                   <Image
-                    className="w-full h-full"
                     src="/favicon.ico"
                     alt="logo"
                     layout="responsive"
                     preview={false}
                     width={60}
                     height={60}
-                    style={{ margin: 0, padding: 0 }}
                   />
                 </div>
               </Link>
-              <div className="flex items-center space-x-1">
-                <FaPhone className="text-green-500 md:text-xl text-xs" />
-                <a href="tel:+91 9918796915" className="text-white md:text-lg text-xs">
+              <div className="flex items-center space-x-2">
+                <FaPhone className="text-green-500 text-xl" />
+                <a href="tel:+91 9918796915" className="text-white text-lg">
                   +91 9918796915
                 </a>
               </div>
-              <div className="md:flex items-center space-x-1 hidden">
-                <FaEnvelope className="text-orange-600 md:text-xl text-xs" />
-                <a
-                  href="mailto:kdrpintercollage@gmail.com"
-                  className="text-white md:text-lg text-xs"
-                >
+              <div className="hidden md:flex items-center space-x-2">
+                <FaEnvelope className="text-orange-600 text-xl" />
+                <a href="mailto:kdrpintercollage@gmail.com" className="text-white text-lg">
                   kdrpintercollage@gmail.com
                 </a>
               </div>
-              <div className="md:flex space-x-5 hidden">
-                <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
-                  <FaFacebook
-                    className="text-white hover:text-blue-600 cursor-pointer"
-                    size={20}
-                  />
+              <div className="hidden md:flex space-x-5">
+                <Link href="">
+                  <FaFacebook className="text-white hover:text-blue-600" size={20} />
                 </Link>
-
                 <Link href="#">
-                  <FaInstagram
-                    className="text-white hover:text-pink-600 cursor-pointer"
-                    size={20}
-                  />
+                  <FaInstagram className="text-white hover:text-pink-600" size={20} />
                 </Link>
-                <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
-                  <FaLinkedin
-                    className="text-white hover:text-blue-700 cursor-pointer"
-                    size={20}
-                  />
+                <Link href="">
+                  <FaLinkedin className="text-white hover:text-blue-700" size={20} />
                 </Link>
               </div>
             </div>
 
-            {/* Right: "Admission Open" and "B.N. MEMORIAL SCHOOL" Buttons with blinking effect */}
-            <div className="flex space-x-2">
+            {/* Right Section: Call-to-Actions */}
+            <div className="flex space-x-4">
               <p
-                className="text-yellow-500 animate-blink hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
-                onClick={() => router.push("/contactus")}
+                className="text-yellow-500 animate-blink hover:text-blue-600 rounded-lg font-bold py-1 px-3 text-sm cursor-pointer"
+                onClick={() => router.push("/admission")}
               >
                 Admission Open
               </p>
               <p
-                className="text-white hover:text-green-600 rounded-lg font-bold p-1 px-4 text-sm cursor-pointer"
-                onClick={() => router.push("/payfees")}
+                className="text-white hover:text-green-600 rounded-lg font-bold py-1 px-4 text-sm cursor-pointer"
+                onClick={() => router.push("/collegefee")}
               >
                 Pay School Fees
               </p>
               <p
-                className="text-white hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
+                className="text-white hover:text-blue-600 rounded-lg font-bold py-1 px-3 text-sm cursor-pointer"
                 onClick={() => router.push("/")}
               >
                 KAMALA DEVI RAJJU PRASAD
@@ -110,32 +95,29 @@ const Header = () => {
         </div>
 
         {/* Mobile Header */}
-        <div className="md:hidden flex justify-between items-center p-2 bg-blue-950">
-          {/* Hamburger Icon on the left */}
+        <div className="md:hidden flex justify-between items-center bg-blue-950 px-4 py-2">
           <FaBars className="text-white text-2xl cursor-pointer" onClick={showDrawer} />
-
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-4">
             <p
-              className="text-yellow-500 animate-blink hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
-              onClick={() => router.push("/contactus")}
+              className="text-yellow-500 animate-blink hover:text-blue-600 rounded-lg font-bold py-1 px-3 text-sm cursor-pointer"
+              onClick={() => router.push("/admission")}
             >
               Admission Open
             </p>
             <p
-              className="text-white hover:text-green-600 rounded-lg font-bold p-1 px-4 text-sm cursor-pointer"
-              onClick={() => router.push("/payfees")}
+              className="text-white hover:text-green-600 rounded-lg font-bold py-1 px-4 text-sm cursor-pointer"
+              onClick={() => router.push("/collegefee")}
             >
               Pay School Fees
             </p>
-            
           </div>
         </div>
-        <hr />
 
-        <div className="md:hidden flex justify-between items-center p-2 bg-blue-950">
+        {/* Additional Mobile Info */}
+        <div className="md:hidden flex justify-between items-center bg-blue-950 px-4 py-2">
           <div className="flex items-center space-x-4">
-          <p
-              className="text-white hover:text-blue-600 rounded-lg font-bold p-1 px-3 text-sm cursor-pointer"
+            <p
+              className="text-white hover:text-blue-600 rounded-lg font-bold py-1 px-3 text-sm cursor-pointer"
               onClick={() => router.push("/")}
             >
               K.D.R.P
@@ -143,24 +125,14 @@ const Header = () => {
             <a href="tel:+91 9918796915" className="text-white text-sm">
               +91 9918796915
             </a>
-            <a
-              href="mailto:kdrpintercollage@gmail.com"
-              className="text-white md:text-lg text-xs"
-            >
+            <a href="mailto:kdrpintercollage@gmail.com" className="text-white text-sm">
               kdrpintercollage@gmail.com
             </a>
-            
-            
           </div>
         </div>
 
         {/* Mobile Drawer */}
-        <Drawer
-          title="Menu"
-          placement="left"
-          onClose={onClose}
-          open={open}
-        >
+        <Drawer title="Menu" placement="left" onClose={onClose} open={open}>
           <div className="flex flex-col space-y-4">
             <Link href="/" onClick={onClose}>
               Home
@@ -175,7 +147,7 @@ const Header = () => {
               K.D.R.P
             </Link>
             <div className="flex space-x-3">
-              <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
+              <Link href="">
                 <FaFacebook size={20} />
               </Link>
               <Link href="#">
@@ -184,7 +156,7 @@ const Header = () => {
               <Link href="#">
                 <FaInstagram size={20} />
               </Link>
-              <Link href="https://www.facebook.com/Virtualseowebsoftware/about">
+              <Link href="">
                 <FaLinkedin size={20} />
               </Link>
             </div>

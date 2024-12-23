@@ -3,7 +3,7 @@ import React from 'react';
 const News = () => {
   return (
     <div className="flex flex-col items-center">
-      <section className="w-full md:mt-10 bg-gray-50">
+      <section className="w-full md:pt-10 bg-gray-50">
         <div className="container mx-auto">
           <div className="text-center mb-10">
             <h2 className="md:text-5xl text-4xl text-blue-800 font-bold mb-4 mt-7 md:-mt-0 p-3">Our Latest News</h2>

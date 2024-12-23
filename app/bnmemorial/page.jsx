@@ -1,3 +1,4 @@
+import ManagementTeam from "../kamaladevirajjuprasad/managementteam";
 import AboutPage from "./homepage/aboutschool";
 import FooterSection from "./homepage/footer_section";
 import Header from "./homepage/header_section";
@@ -29,6 +30,7 @@ export default function Home() {
         <SchoolFacilities />
         <SchoolGallary />
         <Testimonial />
+        <ManagementTeam />
         <News />
         <PartnerSection />
 

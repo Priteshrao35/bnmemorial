@@ -25,7 +25,7 @@ export default function MainSlider() {
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white md:pt-14">
       {/* Swiper Section */}
       <Swiper
         direction="vertical"
