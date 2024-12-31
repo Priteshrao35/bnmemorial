@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image"; // Import Image component from Next.js
 
 const PartnerSection = () => {
   const partners = [
@@ -21,9 +22,11 @@ const PartnerSection = () => {
                 {partners.map((partner, index) => (
                   <div key={index} className="single-partner">
                     <div className="px-4 md:px-8 lg:px-10">
-                      <img
+                      <Image
                         src={`https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/${partner}`}
                         alt={partner}
+                        width={200} // Adjust the width for the logos
+                        height={100} // Adjust the height for the logos
                         loading="lazy"
                         className="h-auto w-full object-contain rounded-lg"
                       />

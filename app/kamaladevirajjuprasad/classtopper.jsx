@@ -45,7 +45,7 @@ function ClassTopper() {
               ))}
               {topper.rating % 1 !== 0 && <FaStar className=" text-yellow-400" />}
             </div>
-            <p className="mt-2 text-black font-semibold text-sm sm:text-base md:text-2xl capitalize">{topper.name}</p>
+            {/* <p className="mt-2 text-black font-semibold text-sm sm:text-base md:text-2xl capitalize">{topper.name}</p> */}
             <p className="text-red-800 text-3xl font-bold">{topper.percentage}</p>
           </div>
         ))}

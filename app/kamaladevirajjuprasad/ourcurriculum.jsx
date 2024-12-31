@@ -33,7 +33,7 @@ export default function Curriculum() {
   }
 
   return (
-    <div className="mx-auto p-4 bg-blue-950">
+    <div className="mx-auto p-4 bg-blue-950 md:px-20">
       <h2 className="text-4xl font-bold text-center mb-6 text-white mt-5">Our Curriculum</h2>
       <Swiper
         slidesPerView={1}
@@ -68,8 +68,8 @@ export default function Curriculum() {
               />
             </div>
             <div className="px-3 flex-grow flex flex-col justify-between">
-              <h3 className="text-xl font-bold text-yellow-300">{item.title}</h3>
-              <p className="text-white text-sm overflow-hidden">{item.description}</p>
+              <h3 className="text-xl font-bold text-yellow-300 text-center">{item.title}</h3>
+              <p className="text-white text-sm overflow-hidden text-center">{item.description}</p>
             </div>
           </SwiperSlide>
         ))}

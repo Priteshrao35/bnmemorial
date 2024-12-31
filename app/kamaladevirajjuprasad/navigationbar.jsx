@@ -7,20 +7,26 @@ const Navbar = () => {
   // Static menu items
   const menuItems = {
     OurSchool: [
-      { label: 'School Overview', key: '' },
-      { label: 'Mission & Vision', key: '' },
-      { label: 'History', key: '' },
-      { label: 'Staff Registration', key: 'staff' },
+      { label: 'About School', key: '/kamaladevirajjuprasad/aboutus' },
+      { label: 'Statement & Philosophy', key: '/kamaladevirajjuprasad/statementphilosophy' },
+      { label: 'Our Managements', key: '/kamaladevirajjuprasad/ourmanagements' },
+      { label: 'CBSE GUIDELINE AND PHILOSOPHY', key: 'cbseguidelineandphilosophy' },
+      { label: 'SPORTS ACADEMY', key: '/kamaladevirajjuprasad/sportacademy' },
+      { label: 'MANDATORY DISCLOSURES', key: '/kamaladevirajjuprasad/mandatorydisclosure' },
 
     ],
     Admission: [
-      { label: 'Admission Process', key: 'admission' },
-      { label: 'Requirements', key: '' },
-      { label: 'Fee Structure', key: 'collegefee' },
+      { label: 'Admission Process', key: '/kamaladevirajjuprasad/addmissionprocess' },
+      { label: 'Online Registration', key: '/admission' },
+      { label: 'Payments', key: '/kamaladevirajjuprasad/payments' },
+      { label: 'School Transport', key: '/kamaladevirajjuprasad/schooltransport' },
+      { label: 'Intrence test Sylabus 2024-25', key: '/html_tutorial.pdf' },
     ],
     OurCampus: [
-      { label: 'Campus Facilities', key: '' },
-      { label: 'Virtual Tour', key: '' },
+      { label: 'Overview', key: '/kamaladevirajjuprasad/ourcampus' },
+      { label: 'Infrastructure', key: '/kamaladevirajjuprasad/infrastructure' },
+      { label: 'Facilities', key: '/kamaladevirajjuprasad/facilities' },
+      { label: 'Photo Gallery', key: '/kamaladevirajjuprasad/photogallery' },
     ],
     OurCurriculum: [
       { label: 'Curriculum Overview', key: '' },

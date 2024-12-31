@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -7,6 +7,7 @@ import "swiper/css/autoplay";
 import { Pagination, Autoplay } from "swiper/modules";
 import axios from "axios";
 import Link from "next/link";
+import Image from "next/image"; // Import Next.js Image component
 
 export default function MainSlider() {
   const [banners, setBanners] = useState([]);
@@ -44,16 +45,20 @@ export default function MainSlider() {
           <SwiperSlide key={banner.id}>
             <div className="transform transition-transform duration-300 hover:scale-110">
               {/* Image for default screen */}
-              <img
+              <Image
                 src={banner.Main_Baner_Image}
                 alt={`Slide ${banner.id}`}
+                width={1200} // You can adjust these values based on your design
+                height={800}
                 className="max-w-full max-h-full object-contain hidden md:block"
               />
 
               {/* Image for mobile */}
-              <img
+              <Image
                 src={banner.Main_Baner_Image} // Same image for mobile view
                 alt={`Slide ${banner.id}`}
+                width={1200} // You can adjust these values for mobile view
+                height={800}
                 className="max-w-full object-cover md:hidden"
               />
             </div>
@@ -78,7 +83,6 @@ export default function MainSlider() {
             </button>
           </Link>
         </div>
-
       </div>
     </div>
   );

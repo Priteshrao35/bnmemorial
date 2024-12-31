@@ -1,4 +1,6 @@
+'use client'
 import React from 'react';
+import Image from 'next/image';
 
 const News = () => {
   return (
@@ -21,10 +23,11 @@ const News = () => {
                     <i className="icofont-calendar"></i> August 15, 2024
                   </span>
                 </div>
-                <img
-                  decoding="async"
+                <Image
                   src="https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/pexels-gustavo-fring-3985072-min-740x520.jpg"
                   alt="News Thumbnail"
+                  width={740} // Add width and height for the image
+                  height={520}
                   className="w-full rounded-t-lg object-cover h-48"
                 />
                 <div className="p-6">
@@ -66,10 +69,11 @@ const News = () => {
                     <i className="icofont-calendar"></i> August 14, 2024
                   </span>
                 </div>
-                <img
-                  decoding="async"
+                <Image
                   src="https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/pexels-gustavo-fring-3985072-min-740x520.jpg"
                   alt="News Thumbnail"
+                  width={740}
+                  height={520}
                   className="w-full rounded-t-lg object-cover h-48"
                 />
                 <div className="p-6">
@@ -111,10 +115,11 @@ const News = () => {
                     <i className="icofont-calendar"></i> March 30, 2023
                   </span>
                 </div>
-                <img
-                  decoding="async"
+                <Image
                   src="https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/pexels-gustavo-fring-3985072-min-740x520.jpg"
                   alt="News Thumbnail"
+                  width={740}
+                  height={520}
                   className="w-full rounded-t-lg object-cover h-48"
                 />
                 <div className="p-6">

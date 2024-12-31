@@ -79,7 +79,7 @@ function AdmissionForm() {
 
       if (response.status === 201) {
         setSuccessMessage('Your admission request has been successfully submitted.');
-        
+
         // Wait for a short time to ensure response has been processed
         setTimeout(() => {
           setStudentDetails(response.data); // Store the student details returned by the API
@@ -98,7 +98,7 @@ function AdmissionForm() {
           setError(null);
           setIsPopupOpen(true); // Open the popup after receiving the student data
         }, 1000); // Delay for 1 second (adjust as needed)
-        
+
         setTimeout(() => {
           setSuccessMessage(null);
         }, 2000);
@@ -200,16 +200,23 @@ function AdmissionForm() {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-bold mb-1 text-black" htmlFor="admissionClass">Class *</label>
-                  <input
-                    type="text"
+                  <select
                     id="admissionClass"
                     name="admissionClass"
                     value={formData.admissionClass}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter class for admission"
-                  />
+                  >
+                    <option value="">Select class for admission</option>
+                    <option value="UKG">UKG</option>
+                    <option value="LKG">LKG</option>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        Class {i + 1}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-bold mb-1 text-black" htmlFor="dob">Date of Birth *</label>
@@ -286,8 +293,8 @@ function AdmissionForm() {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gradient-to-t from-green-700 to-indigo-0 p-6 rounded-lg shadow-lg w-96">
             <p><strong>Student Name:</strong> {studentDetails.student_name}</p>
-            <p><strong>Father's Name:</strong> {studentDetails.fathers_name}</p>
-            <p><strong>Mother's Name:</strong> {studentDetails.mothers_name}</p>
+            <p><strong>Father&apos;s Name:</strong> {studentDetails.fathers_name}</p>
+            <p><strong>Mother&apos;s Name:</strong> {studentDetails.mothers_name}</p>
             <p><strong>Current School:</strong> {studentDetails.current_school}</p>
             <p><strong>Address:</strong> {studentDetails.address}</p>
             <p><strong>Class:</strong> {studentDetails.admission_class}</p>
