@@ -13,8 +13,8 @@ const Navbar = () => {
       { label: 'CBSE GUIDELINE AND PHILOSOPHY', key: 'cbseguidelineandphilosophy' },
       { label: 'SPORTS ACADEMY', key: '/kamaladevirajjuprasad/sportacademy' },
       { label: 'MANDATORY DISCLOSURES', key: '/kamaladevirajjuprasad/mandatorydisclosure' },
-
     ],
+
     Admission: [
       { label: 'Admission Process', key: '/kamaladevirajjuprasad/addmissionprocess' },
       { label: 'Online Registration', key: '/admission' },
@@ -22,28 +22,40 @@ const Navbar = () => {
       { label: 'School Transport', key: '/kamaladevirajjuprasad/schooltransport' },
       { label: 'Intrence test Sylabus 2024-25', key: '/html_tutorial.pdf' },
     ],
+
     OurCampus: [
       { label: 'Overview', key: '/kamaladevirajjuprasad/ourcampus' },
       { label: 'Infrastructure', key: '/kamaladevirajjuprasad/infrastructure' },
       { label: 'Facilities', key: '/kamaladevirajjuprasad/facilities' },
       { label: 'Photo Gallery', key: '/kamaladevirajjuprasad/photogallery' },
+      { label: 'Video Gallery', key: '/kamaladevirajjuprasad/videogallery' },
+      { label: 'Virtual Tour', key: '/kamaladevirajjuprasad/virtualtour' },
     ],
+    
     OurCurriculum: [
-      { label: 'Curriculum Overview', key: '' },
-      { label: 'Extra-Curricular Activities', key: '' },
+      { label: 'Curriculum And Assessment', key: '/kamaladevirajjuprasad/curriculumandassessment' },
+      { label: 'Academic Pratices', key: '/kamaladevirajjuprasad/academicpratices' },
     ],
     ForParents: [
-      { label: 'Parent Portal', key: '' },
-      { label: 'Resources for Parents', key: '' },
+      { label: 'Student Activities', key: '/kamaladevirajjuprasad/studentactivities' },
+      { label: 'Guidelines And Policies', key: '/kamaladevirajjuprasad/guidelinesandpolicies' },
+      { label: 'Health Guidelines', key: '/kamaladevirajjuprasad/healthguidelines' },
+      { label: 'Feedback', key: '/kamaladevirajjuprasad/feedback' },
+      { label: 'Circulars', key: '/kamaladevirajjuprasad/circulars' },
+
     ],
     ForStudents: [
-      { label: 'Student Portal', key: '' },
-      { label: 'Study Materials', key: '' },
+      { label: 'Student Council', key: '/kamaladevirajjuprasad/studentcouncil' },
+      { label: 'student Responsibilities And Rights', key: '/kamaladevirajjuprasad/student-responsibilities-and-rights' },
+      { label: 'Rules And Policies', key: '/kamaladevirajjuprasad/rules-and-policies' },
+      { label: 'Discipline Incharges', key: '/kamaladevirajjuprasad/discipline-incharges' },
+      { label: 'Transfer Certificate', key: '/kamaladevirajjuprasad/transfercertificate' },
+      { label: 'Mark Sheet & Certificate', key: '/kamaladevirajjuprasad/certificate' },
     ],
   };
 
   return (
-    <div className="hidden fixed md:mt-14 md:flex z-50 justify-center items-center space-x-4 w-full text-sm p-2 cursor-pointer bg-white"> {/* Decreased text size to text-sm */}
+    <div className="hidden fixed md:mt-14 md:flex z-50 justify-center text-lg items-center space-x-4 w-full p-2 cursor-pointer bg-white">
       {/* Static Navbar Links with Dropdowns */}
       {Object.keys(menuItems).map((category) => (
         <Dropdown
@@ -52,7 +64,7 @@ const Navbar = () => {
             items: menuItems[category].map(item => ({
               key: item.key,
               label: (
-                <Link href={item.key} className="block px-4 py-2 text-black hover:bg-blue-500 hover:text-white"> {/* Changed text color to white */}
+                <Link href={item.key} className="block px-4 py-2 text-black hover:bg-blue-500 hover:text-white">
                   {item.label}
                 </Link>
               ),
@@ -60,7 +72,7 @@ const Navbar = () => {
           }}
           trigger={['hover']}
         >
-          <a onClick={(e) => e.preventDefault()} className="text-black font-bold hover:text-blue-500"> {/* Changed text color to white */}
+          <a onClick={(e) => e.preventDefault()} className="text-black font-bold hover:text-blue-500">
             <Space>
               {category} <DownOutlined />
             </Space>
@@ -68,20 +80,14 @@ const Navbar = () => {
         </Dropdown>
       ))}
 
-      {/* Static Links */}
-      <Link href="" className="text-black font-bold hover:text-blue-500">
-        Portfolio
-      </Link>
-      <Link href="" className="text-black font-bold hover:text-blue-500">
+      <Link href="/blogs" className="text-black font-bold hover:text-blue-500">
         Blogs
       </Link>
-      <Link href="" className="text-black font-bold hover:text-blue-500"> 
-        About Us
-      </Link>
-      <Link href="" className="text-black font-bold hover:text-blue-500"> 
+
+      <Link href="/staff" className="text-black font-bold hover:text-blue-500"> 
         Careers
       </Link>
-      <Link href="" className="text-black font-bold hover:text-blue-500">
+      <Link href="/contactus" className="text-black font-bold hover:text-blue-500">
         Contacts
       </Link>
     </div>

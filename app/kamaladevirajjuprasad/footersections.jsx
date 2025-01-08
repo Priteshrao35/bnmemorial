@@ -14,37 +14,54 @@ function FooterSection() {
   // Static menu data
   const menuItems = {
     OurSchool: [
-      { label: "School Overview", key: "/ourschool/overview" },
-      { label: "Mission & Vision", key: "/ourschool/mission" },
-      { label: "History", key: "/ourschool/history" },
+      { label: 'About School', key: '/kamaladevirajjuprasad/aboutus' },
+      { label: 'Statement & Philosophy', key: '/kamaladevirajjuprasad/statementphilosophy' },
+      { label: 'Our Managements', key: '/kamaladevirajjuprasad/ourmanagements' },
+      { label: 'CBSE GUIDELINE AND PHILOSOPHY', key: 'cbseguidelineandphilosophy' },
+      { label: 'SPORTS ACADEMY', key: '/kamaladevirajjuprasad/sportacademy' },
+      { label: 'MANDATORY DISCLOSURES', key: '/kamaladevirajjuprasad/mandatorydisclosure' },
     ],
+
     Admission: [
-      { label: "Admission Process", key: "/admission/process" },
-      { label: "Requirements", key: "/admission/requirements" },
-      { label: "Fee Structure", key: "/admission/fees" },
+      { label: 'Admission Process', key: '/kamaladevirajjuprasad/addmissionprocess' },
+      { label: 'Online Registration', key: '/admission' },
+      { label: 'Payments', key: '/kamaladevirajjuprasad/payments' },
+      { label: 'School Transport', key: '/kamaladevirajjuprasad/schooltransport' },
+      { label: 'Intrence test Sylabus 2024-25', key: '/html_tutorial.pdf' },
     ],
+
     OurCampus: [
-      { label: "Campus Facilities", key: "/ourcampus/facilities" },
-      { label: "Virtual Tour", key: "/ourcampus/tour" },
+      { label: 'Overview', key: '/kamaladevirajjuprasad/ourcampus' },
+      { label: 'Infrastructure', key: '/kamaladevirajjuprasad/infrastructure' },
+      { label: 'Facilities', key: '/kamaladevirajjuprasad/facilities' },
+      { label: 'Photo Gallery', key: '/kamaladevirajjuprasad/photogallery' },
+      { label: 'Video Gallery', key: '/kamaladevirajjuprasad/videogallery' },
+      { label: 'Virtual Tour', key: '/kamaladevirajjuprasad/virtualtour' },
     ],
-    OurCurriculum: [
-      { label: "Curriculum Overview", key: "/ourcurriculum/overview" },
-      { label: "Extra-Curricular Activities", key: "/ourcurriculum/activities" },
-    ],
-    ForParents: [
-      { label: "Parent Portal", key: "/forparents/portal" },
-      { label: "Resources for Parents", key: "/forparents/resources" },
-    ],
+
     ForStudents: [
-      { label: "Student Portal", key: "/forstudents/portal" },
-      { label: "Study Materials", key: "/forstudents/materials" },
+      { label: 'Student Council', key: '/kamaladevirajjuprasad/studentcouncil' },
+      { label: 'student Responsibilities And Rights', key: '/kamaladevirajjuprasad/student-responsibilities-and-rights' },
+      { label: 'Rules And Policies', key: '/kamaladevirajjuprasad/rules-and-policies' },
+      { label: 'Discipline Incharges', key: '/kamaladevirajjuprasad/discipline-incharges' },
+      { label: 'Transfer Certificate', key: '/kamaladevirajjuprasad/transfercertificate' },
+      { label: 'Mark Sheet & Certificate', key: '/kamaladevirajjuprasad/certificate' },
+    ],
+
+    AllImportantLinks: [
+      { label: "Contact us", key: "/forparents/resources" },
+      { label: "Blogs", key: "/forparents/resources" },
+      { label: "Careers", key: "/forparents/resources" },
+      { label: "Privacy Policy", key: "/forparents/resources" },
+      { label: "Importants Notice", key: "/forparents/resources" },
+
     ],
   };
 
   return (
     <footer className="bg-gradient-to-r from-blue-800 to-blue-950 text-gray-300 text-sm">
       <div className="py-10 px-5 md:px-10 flex flex-col md:flex-row justify-between">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-12 md:w-3/4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 md:w-3/3">
           {Object.keys(menuItems).map((category) => (
             <div key={category} className="text-gray-100">
               <h2 className="text-lg font-semibold mb-4">
@@ -71,7 +88,7 @@ function FooterSection() {
         </div>
 
         {/* Follow Us Section */}
-        <div className="md:w-1/4 mt-5 md:mt-0">
+        <div className="md:w-1/6 mt-5 md:mt-0">
           <h2 className="text-lg font-semibold mb-6 uppercase text-gray-100">
             Follow Us
           </h2>
@@ -108,13 +125,13 @@ function FooterSection() {
               <p>Phone: +123-456-7890</p>
               <p>Email: info@schoolname.com</p>
             </div>
-            
+
           </div>
         </div>
       </div>
       <hr />
       <div className="text-center p-2 text-white font-bold">
-        &copy; {new Date().getFullYear()} K.D.R.P. All rights reserved.
+        &copy; {new Date().getFullYear()} Kamla Devi Rajju Prasad All rights reserved.
       </div>
     </footer>
   );
