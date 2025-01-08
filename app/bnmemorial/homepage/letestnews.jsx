@@ -26,7 +26,7 @@ const News = () => {
                 <Image
                   src="https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/pexels-gustavo-fring-3985072-min-740x520.jpg"
                   alt="News Thumbnail"
-                  width={740} // Add width and height for the image
+                  width={740}
                   height={520}
                   className="w-full rounded-t-lg object-cover h-48"
                 />
@@ -39,20 +39,22 @@ const News = () => {
                   <p className="text-gray-700 mb-4">Short description of the news goes here.</p>
                   <div className="flex justify-between items-center">
                     <a href="https://kidbawp.codebasket.xyz/category/bez-rubriki/" className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/heart-icon.png"
-                        className="mr-2"
                         alt="Heart"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       ! Без рубрики
                     </a>
                     <span className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/comment-icon.png"
-                        className="mr-2"
                         alt="Comment"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       No Comment
                     </span>
@@ -85,20 +87,22 @@ const News = () => {
                   <p className="text-gray-700 mb-4">Short description of the news goes here.</p>
                   <div className="flex justify-between items-center">
                     <a href="https://kidbawp.codebasket.xyz/category/bez-rubriki/" className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/heart-icon.png"
-                        className="mr-2"
                         alt="Heart"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       ! Без рубрики
                     </a>
                     <span className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/comment-icon.png"
-                        className="mr-2"
                         alt="Comment"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       No Comment
                     </span>
@@ -133,20 +137,22 @@ const News = () => {
                   </p>
                   <div className="flex justify-between items-center">
                     <a href="https://kidbawp.codebasket.xyz/category/kids-education/" className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/heart-icon.png"
-                        className="mr-2"
                         alt="Heart"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       Kids Education
                     </a>
                     <span className="text-gray-500 flex items-center">
-                      <img
-                        decoding="async"
+                      <Image
                         src="https://kidbawp.codebasket.xyz/wp-content/themes/kidba/assets/images/comment-icon.png"
-                        className="mr-2"
                         alt="Comment"
+                        width={16}
+                        height={16}
+                        className="mr-2"
                       />
                       No Comment
                     </span>

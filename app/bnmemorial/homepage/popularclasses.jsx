@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 const PopularClasses = () => {
   const [showMore, setShowMore] = useState(false); // State to control visibility of additional classes
@@ -46,9 +47,11 @@ const PopularClasses = () => {
         {(showMore ? filteredClasses : filteredClasses.slice(0, 3)).map((classItem, index) => (
           <div key={index} className="class-card border rounded-lg overflow-hidden shadow-lg">
             <div className="overflow-hidden">
-              <img
+              <Image
                 src={classItem.image}
                 alt={classItem.title}
+                width={740}
+                height={520}
                 className="w-full h-48 object-cover transition-transform duration-300 transform hover:scale-110"
               />
             </div>
