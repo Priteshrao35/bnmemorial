@@ -12,6 +12,8 @@ function CollegeFree() {
   const [admissionNo, setAdmissionNo] = useState('');
   const [studentName, setStudentName] = useState('');
   const [dob, setDob] = useState('');
+  const [category, setCategory] = useState('');
+  const [searchClass, setSearchClass] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -19,15 +21,32 @@ function CollegeFree() {
   const [amount, setAmount] = useState('');
   const router = useRouter();
 
+  const categoriesClasses = {
+    'lkg_to_8': ['LKG', '1', '2', '3', '4', '5', '6', '7', '8'],
+    '6_to_12': ['6', '7', '8', '9', '10', '11', '12']
+  };
+
+  const classOptions = categoriesClasses[category] || [];
+
   const handleSearch = async (e) => {
     e.preventDefault();
 
+    // Validation for empty fields
+    if (!admissionNo || !studentName || !dob || !category || !searchClass) {
+      setErrorMessage('Please fill in all the fields.');
+      setStudentDetails(null);
+      return; // Stop execution if any field is empty
+    }
+
     try {
+      // Ensure that all fields match correctly in the request
       const response = await Axios.get(`https://bnmemorials.pythonanywhere.com/apis/admissions/`, {
         params: {
           student_name: studentName,
-          admission_number: admissionNo,
+          roll_number: admissionNo,
           dob: dob,
+          category: category,
+          admission_class: searchClass,
         },
       });
 
@@ -37,13 +56,15 @@ function CollegeFree() {
       } else {
         setStudentDetails(response.data);
         setErrorMessage('');
+        localStorage.setItem('studentDetails', JSON.stringify(response.data[0]));  // Store in localStorage
+        router.push('/studentDetails');  // Navigate to the student details page
       }
     } catch (error) {
       setErrorMessage('Student not found or an error occurred.');
       setStudentDetails(null);
     }
-    setIsModalOpen(true);
   };
+
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -125,7 +146,7 @@ function CollegeFree() {
         <form onSubmit={handleSearch} className="w-full max-w-xl p-6 rounded-lg shadow-xl bg-white bg-opacity-80 backdrop-blur-md">
           <div className="mb-4">
             <label htmlFor="adm-no" className="block text-sm font-medium text-gray-700 mb-1">
-              Student Adm. No.:
+              Roll Number:
             </label>
             <input
               type="text"
@@ -164,6 +185,47 @@ function CollegeFree() {
             />
           </div>
 
+          {/* Category Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              Category:
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md text-black"
+            >
+              <option value="">Select Category</option>
+              <option value="lkg_to_8">LKG to Grade 8</option>
+              <option value="6_to_12">Grade 6 to 12</option>
+            </select>
+          </div>
+
+          {/* Class Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="class" className="block text-sm font-medium text-gray-700 mb-1">
+              Class:
+            </label>
+            <select
+              value={searchClass}
+              onChange={(e) => setSearchClass(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md text-black"
+              disabled={!category}
+            >
+              <option value="">Select Class</option>
+              {classOptions.map((className, index) => (
+                <option key={index} value={className}>{className}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="text-red-600 text-center mt-4">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="text-center mt-6">
             <button
               type="submit"
@@ -174,117 +236,6 @@ function CollegeFree() {
           </div>
         </form>
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-gradient-to-t from-green-500 to-indigo-50 p-10 rounded-lg shadow-lg max-w-3xl w-full relative overflow-hidden">
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition duration-200"
-            >
-              X
-            </button>
-
-            <div className="max-h-[80vh] overflow-y-auto">
-              {studentDetails && studentDetails.length > 0 ? (
-                studentDetails.map((student, index) => (
-                  <div key={index} className="text-black">
-                    <h3 className="text-3xl font-semibold text-center text-black mb-6">
-                      Student Details
-                    </h3>
-                    <ul className="grid grid-cols-2 gap-6 mb-6 text-lg text-black">
-                      <li className="text-right font-semibold text-black">
-                        <strong>Name:</strong>
-                      </li>
-                      <li className="text-left">{student.student_name}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Father&apos;s Name:</strong>
-                      </li>
-                      <li className="text-left">{student.fathers_name}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Mother&apos;s Name:</strong>
-                      </li>
-                      <li className="text-left">{student.mothers_name}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Current School:</strong>
-                      </li>
-                      <li className="text-left">{student.current_school}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Admission Class:</strong>
-                      </li>
-                      <li className="text-left">{student.admission_class}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Date of Birth:</strong>
-                      </li>
-                      <li className="text-left">
-                        {new Date(student.dob).toLocaleDateString()}
-                      </li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Gender:</strong>
-                      </li>
-                      <li className="text-left">{student.gender}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Contact:</strong>
-                      </li>
-                      <li className="text-left">{student.contact}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Pincode:</strong>
-                      </li>
-                      <li className="text-left">{student.pincode}</li>
-
-                      <li className="text-right font-semibold text-black">
-                        <strong>Your Fee:</strong>
-                      </li>
-                      <li className="text-left">
-                        {student.fee === "0.00" ? (
-                          <button
-                            className="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-green-400 transition duration-200"
-                            onClick={handlePaymentClick}
-                          >
-                            Pay Your Fee
-                          </button>
-                        ) : (
-                          <span className="text-blue-600 font-bold">Paid</span>
-                        )}
-                      </li>
-                    </ul>
-                  </div>
-                ))
-              ) : (
-                <p className="text-red-600 text-center mt-4">{errorMessage}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isPaymentModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-12 rounded-md shadow-md w-full max-w-3xl relative">
-            <button
-              onClick={() => setIsPaymentModalOpen(false)}
-              className="absolute top-4 right-4 text-xl font-bold text-black hover:text-gray-700"
-            >
-              X
-            </button>
-
-            <h3 className="text-xl font-bold mb-4 text-center text-black">Payment Details</h3>
-            <img
-              src="/prqrcode.jpeg"
-              alt="QR Code"
-              className="mx-auto mb-4 w-1/4 h-1/4"
-            />
-          </div>
-        </div>
-      )}
 
       <FooterSection />
     </div>
