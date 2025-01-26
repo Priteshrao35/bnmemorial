@@ -229,6 +229,7 @@ function StudentDetails() {
                 alt="QR Code"
                 className="mx-auto mb-4 w-1/4 h-1/4"
               />
+              
 
               {/* Dynamic Fee Amount Inputs */}
               {studentDetails?.fees?.map((fee) => {
@@ -245,16 +246,18 @@ function StudentDetails() {
                         type="number"
                         id={`fee-${fee.id}`}
                         className="w-full px-4 py-2 border text-black border-gray-300 rounded-lg"
-                        value={amounts[fee.id] || fee.amount}
+                        value={amounts[fee.id] || ''}
                         onChange={(e) =>
-                          handleAmountChange(fee.id, parseFloat(e.target.value))
+                          handleAmountChange(fee.id, parseFloat(e.target.value) || '')
                         }
+                        placeholder={`Enter amount for ${fee.fee_type}`}
                       />
                     </div>
                   );
                 }
                 return null;
               })}
+
 
               <div className="flex justify-center">
                 <button
