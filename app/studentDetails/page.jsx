@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Header from '../kamaladevirajjuprasad/headersection';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
 import FooterSection from '../kamaladevirajjuprasad/footersections';
+import { jsPDF } from 'jspdf';
 
 function StudentDetails() {
   const router = useRouter();
@@ -38,13 +39,12 @@ function StudentDetails() {
     }
 
     try {
-      // Prepare the structured data for the API
       const formData = {
         admission_no: studentDetails.id,
         amounts: amounts, // Send fee updates as a JSON object
       };
 
-      console.log('Submitting payment with data:', formData); // Log the data being sent
+      console.log('Submitting payment with data:', formData);
 
       const response = await fetch(
         `https://bnmemorials.pythonanywhere.com/apis/admissions/${studentDetails.id}/`,
@@ -53,17 +53,16 @@ function StudentDetails() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData), // Send the data as JSON
+          body: JSON.stringify(formData),
         }
       );
 
       const data = await response.json();
-      console.log('API Response:', data); // Log the response to debug
+      console.log('API Response:', data);
 
       if (response.ok) {
         alert('Payment updated successfully!');
         setIsPaymentModalOpen(false);
-        // Fetch and update the student details again to show updated data
         const updatedStudentData = await fetchStudentDetails();
         setStudentDetails(updatedStudentData);
       } else {
@@ -75,7 +74,6 @@ function StudentDetails() {
     }
   };
 
-  // Function to fetch student details again after the update
   const fetchStudentDetails = async () => {
     const response = await fetch(
       `https://bnmemorials.pythonanywhere.com/apis/admissions/${studentDetails.id}/`
@@ -83,6 +81,59 @@ function StudentDetails() {
     const data = await response.json();
     return data;
   };
+
+  const generateInvoicePDF = () => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.text(`Invoice for ${studentDetails.student_name}`, 20, 20);
+
+    // Student Details
+    doc.setFontSize(12);
+    doc.text(`Admission Number: ${studentDetails.id}`, 20, 30);
+    doc.text(`School/College: ${studentDetails.current_school}`, 20, 40);
+    doc.text(`Total Fee: ₹${studentDetails.total_fee}`, 20, 50);
+
+    // Line Break
+    let yOffset = 60;
+    doc.setFontSize(14);
+    doc.text('Fee Details:', 20, yOffset);
+    yOffset += 10;
+
+    // Table Header
+    doc.setFontSize(12);
+    doc.text('Fee Type', 20, yOffset);
+    doc.text('Amount', 120, yOffset);
+    yOffset += 10;
+    doc.line(20, yOffset, 190, yOffset); // Draw a line to separate header
+    yOffset += 5;
+
+    // Fee Details Table
+    studentDetails.fees.forEach((fee) => {
+      if (fee.paid) {
+        doc.text(fee.fee_type, 20, yOffset);
+        doc.text(`₹${fee.amount}`, 120, yOffset);
+        yOffset += 10;
+      }
+    });
+
+    // Payment Summary
+    doc.text('Total Paid:', 20, yOffset);
+    const totalPaid = studentDetails.fees
+      .filter((fee) => fee.paid)
+      .reduce((acc, fee) => acc + fee.amount, 0);
+    doc.text(`₹${totalPaid}`, 120, yOffset);
+    yOffset += 10;
+
+    // Final Message
+    doc.setFontSize(10);
+    doc.text('Thank you for your payment!', 20, yOffset + 10);
+
+    // Save the PDF
+    doc.save('invoice.pdf');
+  };
+
 
   const isFeeUnpaid = studentDetails?.fees?.some((fee) => !fee.paid);
 
@@ -93,7 +144,6 @@ function StudentDetails() {
       <div className="bg-gradient-to-b from-indigo-600 to-blue-400 md:pt-32 pb-5 px-[25em]">
         {studentDetails ? (
           <div className="bg-white rounded-lg shadow-lg p-8">
-            {/* Profile Section */}
             <div className="flex items-center space-x-20 mb-6">
               {studentDetails.profile_picture ? (
                 <div className="relative w-32 h-32 rounded-full overflow-hidden">
@@ -121,7 +171,6 @@ function StudentDetails() {
               </div>
             </div>
 
-            {/* Student Details */}
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg text-gray-700">
               <li>
                 <strong>Roll Number:</strong> {studentDetails.roll_number}
@@ -162,7 +211,6 @@ function StudentDetails() {
               </li>
             </ul>
 
-            {/* Fee Details */}
             <div className="mt-8">
               <h3 className="text-xl font-bold text-gray-700 mb-4">Fee Details</h3>
               <ul className="space-y-4">
@@ -191,7 +239,6 @@ function StudentDetails() {
               </ul>
             </div>
 
-            {/* Payment Button */}
             <div className="mt-6 flex justify-end">
               {isFeeUnpaid ? (
                 <button
@@ -204,6 +251,17 @@ function StudentDetails() {
                 <span className="text-green-600 font-bold text-lg">All Fees Paid</span>
               )}
             </div>
+            {/* PDF Button */}
+            {!isFeeUnpaid && (
+              <div className="mt-6 flex justify-end">
+                <button
+                  className="px-6 py-3 bg-green-600 text-white rounded-md shadow-md hover:bg-green-500 transition duration-300 transform hover:scale-105"
+                  onClick={generateInvoicePDF}
+                >
+                  Download Invoice
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-center text-white text-xl mt-8">No student data found.</p>
@@ -229,7 +287,7 @@ function StudentDetails() {
                 alt="QR Code"
                 className="mx-auto mb-4 w-1/4 h-1/4"
               />
-              
+
 
               {/* Dynamic Fee Amount Inputs */}
               {studentDetails?.fees?.map((fee) => {
