@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 import FooterSection from '../kamaladevirajjuprasad/footersections';
-import Header from '../kamaladevirajjuprasad/headersection';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
 import { useRouter } from 'next/navigation';
 
@@ -19,6 +18,7 @@ function CollegeFree() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const categoriesClasses = {
@@ -30,17 +30,14 @@ function CollegeFree() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-
-    // Validation for empty fields
     if (!admissionNo || !studentName || !dob || !category || !searchClass) {
       setErrorMessage('Please fill in all the fields.');
       setStudentDetails(null);
-      return; // Stop execution if any field is empty
+      return;
     }
-
+    setLoading(true);
     try {
-      // Ensure that all fields match correctly in the request
-      const response = await Axios.get(`https://bnmemorials.pythonanywhere.com/apis/admissions/`, {
+      const response = await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/apis/admissions/`, {
         params: {
           student_name: studentName,
           roll_number: admissionNo,
@@ -56,51 +53,37 @@ function CollegeFree() {
       } else {
         setStudentDetails(response.data);
         setErrorMessage('');
-        localStorage.setItem('studentDetails', JSON.stringify(response.data[0]));  // Store in localStorage
-        router.push('/studentDetails');  // Navigate to the student details page
+        localStorage.setItem('studentDetails', JSON.stringify(response.data[0]));
+        router.push('/studentDetails');
       }
     } catch (error) {
       setErrorMessage('Student not found or an error occurred.');
       setStudentDetails(null);
+    } finally {
+      setLoading(false);
     }
   };
-
 
   const closeModal = () => {
     setIsModalOpen(false);
     setIsPaymentModalOpen(false);
   };
 
-  const handlePaymentClick = () => {
-    setIsPaymentModalOpen(true);
-  };
-
-  const handleFileUpload = (e) => {
-    setUploadedFile(e.target.files[0]);
-  };
+  const handlePaymentClick = () => setIsPaymentModalOpen(true);
+  const handleFileUpload = (e) => setUploadedFile(e.target.files[0]);
 
   const handlePaymentSubmission = async () => {
-    if (!amount || !uploadedFile) {
-      alert('Please provide all payment details.');
-      return;
-    }
-
+    if (!amount || !uploadedFile) { alert('Please provide all payment details.'); return; }
     try {
       const formData = new FormData();
       formData.append('admission_no', admissionNo);
       formData.append('amount', amount);
       formData.append('payment_proof', uploadedFile);
-
       const response = await Axios.post(
-        `https://bnmemorials.pythonanywhere.com/apis/admissions/${admissionNo}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/apis/admissions/${admissionNo}/`,
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
-
       if (response.data.success) {
         alert('Payment details submitted successfully!');
         setStudentDetails(response.data.updated_student);
@@ -115,126 +98,253 @@ function CollegeFree() {
     }
   };
 
+  const inputBase = {
+    width: '100%',
+    background: 'white',
+    border: '2px solid #e5e7eb',
+    borderRadius: 14,
+    padding: '13px 16px 13px 46px',
+    color: '#111827',
+    fontSize: 14,
+    outline: 'none',
+    transition: 'border-color .2s, box-shadow .2s',
+  };
+
+  const selectBase = {
+    ...inputBase,
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    cursor: 'pointer',
+  };
+
   return (
-    <div>
-      <Header />
+    <div className="min-h-screen flex flex-col" style={{ background: '#fafaff' }}>
       <Navbar />
-      <div className="bg-gradient-animation flex flex-col items-center justify-center min-h-screen p-5 bg-cover">
-        <style>{`
-          @keyframes gradientAnimation {
-            0% {
-              background-position: 0% 50%;
-            }
-            50% {
-              background-position: 100% 50%;
-            }
-            100% {
-              background-position: 0% 50%;
-            }
-          }
 
-          .bg-gradient-animation {
-            background: linear-gradient(270deg, #ff7e5f, #3b82f6);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-          }
-        `}</style>
+      {/* ══ FULL-SCREEN PORTAL ══ */}
+      <div className="relative flex-1 flex flex-col lg:flex-row overflow-hidden">
 
-        <h2 className="text-4xl font-bold text-white text-center mb-6 animate__animated animate__fadeIn">
-          Search for the Student
-        </h2>
-        <form onSubmit={handleSearch} className="w-full max-w-xl p-6 rounded-lg shadow-xl bg-white bg-opacity-80 backdrop-blur-md">
-          <div className="mb-4">
-            <label htmlFor="adm-no" className="block text-sm font-medium text-gray-700 mb-1">
-              Roll Number:
-            </label>
-            <input
-              type="text"
-              id="adm-no"
-              className="w-full px-3 py-2 border rounded-md text-black"
-              placeholder="Enter Admission Number"
-              value={admissionNo}
-              onChange={(e) => setAdmissionNo(e.target.value)}
-            />
-          </div>
+        {/* ── LEFT PANEL — colourful info side ── */}
+        <div className="relative hidden lg:flex flex-col justify-between w-[42%] flex-shrink-0 px-14 py-14 overflow-hidden"
+          style={{ background: 'linear-gradient(145deg,#6366f1 0%,#8b5cf6 40%,#ec4899 100%)' }}>
 
-          <div className="mb-4">
-            <label htmlFor="student-name" className="block text-sm font-medium text-gray-700 mb-1">
-              Student Name (First three characters):
-            </label>
-            <input
-              type="text"
-              id="student-name"
-              className="w-full px-3 py-2 border rounded-md text-black"
-              placeholder="Enter First 3 Characters"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-            />
-          </div>
+          {/* Soft blob decor */}
+          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-20" style={{ background: '#fff' }} />
+          <div className="absolute bottom-10 -left-10 w-56 h-56 rounded-full opacity-15" style={{ background: '#fff' }} />
+          <div className="absolute top-1/2 right-10 w-32 h-32 rounded-full opacity-10" style={{ background: '#fff' }} />
 
-          <div className="mb-4">
-            <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">
-              Date of Birth:
-            </label>
-            <input
-              type="date"
-              id="dob"
-              className="w-full px-3 py-2 border rounded-md text-black"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-            />
-          </div>
+          {/* Dot pattern */}
+          <div className="absolute inset-0 opacity-[0.07]" style={{
+            backgroundImage: 'radial-gradient(white 1.5px, transparent 1.5px)',
+            backgroundSize: '28px 28px',
+          }} />
 
-          {/* Category Dropdown */}
-          <div className="mb-4">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-              Category:
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md text-black"
-            >
-              <option value="">Select Category</option>
-              <option value="lkg_to_8">LKG to Grade 8</option>
-              <option value="6_to_12">Grade 6 to 12</option>
-            </select>
-          </div>
-
-          {/* Class Dropdown */}
-          <div className="mb-4">
-            <label htmlFor="class" className="block text-sm font-medium text-gray-700 mb-1">
-              Class:
-            </label>
-            <select
-              value={searchClass}
-              onChange={(e) => setSearchClass(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md text-black"
-              disabled={!category}
-            >
-              <option value="">Select Class</option>
-              {classOptions.map((className, index) => (
-                <option key={index} value={className}>{className}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="text-red-600 text-center mt-4">
-              {errorMessage}
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-4 py-2 mb-8">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-white text-[11px] font-black uppercase tracking-[2px]">Student Portal · 2025–26</span>
             </div>
-          )}
-
-          <div className="text-center mt-6">
-            <button
-              type="submit"
-              className="w-full px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition duration-300"
-            >
-              Search
-            </button>
+            <h2 className="font-black text-white leading-tight mb-4" style={{ fontSize: 'clamp(28px,3vw,44px)' }}>
+              View Your<br />Fee Status<br />
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>Instantly</span>
+            </h2>
+            <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+              Enter your student details to access your complete fee record, payment history, and download your invoice.
+            </p>
           </div>
-        </form>
+
+          {/* Feature cards */}
+          <div className="relative space-y-3">
+            {[
+              { icon: '🔍', title: 'Quick Search', desc: 'Find records in seconds' },
+              { icon: '💳', title: 'Pay Online', desc: 'Secure payment portal' },
+              { icon: '📄', title: 'Download Invoice', desc: 'Instant PDF generation' },
+            ].map(f => (
+              <div key={f.title} className="flex items-center gap-4 rounded-2xl px-4 py-3"
+                style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                <span className="text-2xl">{f.icon}</span>
+                <div>
+                  <p className="text-white font-black text-sm">{f.title}</p>
+                  <p className="text-white/55 text-xs">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom trust */}
+          <div className="relative flex items-center gap-4 pt-6 border-t border-white/15">
+            <span className="text-white/50 text-xs font-bold">🔒 Secure</span>
+            <span className="text-white/50 text-xs font-bold">✅ Verified</span>
+            <span className="text-white/50 text-xs font-bold">🔏 Private</span>
+          </div>
+        </div>
+
+        {/* ── RIGHT PANEL — form ── */}
+        <div className="relative flex-1 flex flex-col items-center justify-center px-5 sm:px-10 py-14">
+
+          {/* Soft pastel blob bg */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: `
+              radial-gradient(ellipse 60% 50% at 10% 20%, rgba(167,139,250,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 60% at 90% 80%, rgba(236,72,153,0.08) 0%, transparent 55%),
+              radial-gradient(ellipse 40% 40% at 50% 50%, rgba(99,102,241,0.06) 0%, transparent 60%)
+            `
+          }} />
+
+          <div className="relative w-full max-w-md">
+
+            {/* Mobile-only header */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3"
+                style={{ background: 'linear-gradient(135deg,#6366f1,#ec4899)' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+              </div>
+              <h1 className="font-black text-gray-900 text-2xl mb-1">Find Your Record</h1>
+              <p className="text-gray-400 text-sm">Enter your student details below</p>
+            </div>
+
+            {/* Desktop heading */}
+            <div className="hidden lg:block mb-8">
+              <p className="text-xs font-black uppercase tracking-[3px] mb-2" style={{ color: '#6366f1' }}>Student Fee Portal</p>
+              <h1 className="font-black text-gray-900 text-3xl mb-1">Find Your Record</h1>
+              <p className="text-gray-400 text-sm">Enter your student details to view fee status</p>
+            </div>
+
+            <form onSubmit={handleSearch}>
+              <div className="space-y-3">
+
+                {/* Roll Number */}
+                <div>
+                  <label className="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Roll / Admission Number</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">🎫</span>
+                    <input
+                      type="text"
+                      placeholder="Enter admission number"
+                      value={admissionNo}
+                      onChange={e => setAdmissionNo(e.target.value)}
+                      style={inputBase}
+                      onFocus={e => { e.target.style.borderColor = '#6366f1'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                </div>
+
+                {/* Student Name */}
+                <div>
+                  <label className="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Student Name (first 3 characters)</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">👤</span>
+                    <input
+                      type="text"
+                      placeholder="e.g. Raj"
+                      value={studentName}
+                      onChange={e => setStudentName(e.target.value)}
+                      style={inputBase}
+                      onFocus={e => { e.target.style.borderColor = '#6366f1'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                </div>
+
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Date of Birth</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">🎂</span>
+                    <input
+                      type="date"
+                      value={dob}
+                      onChange={e => setDob(e.target.value)}
+                      style={inputBase}
+                      onFocus={e => { e.target.style.borderColor = '#6366f1'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
+                      onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                </div>
+
+                {/* Category + Class */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Category</label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">📂</span>
+                      <select
+                        value={category}
+                        onChange={e => { setCategory(e.target.value); setSearchClass(''); }}
+                        style={selectBase}
+                        onFocus={e => { e.target.style.borderColor = '#6366f1'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
+                        onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                      >
+                        <option value="">Select</option>
+                        <option value="lkg_to_8">LKG – Grade 8</option>
+                        <option value="6_to_12">Grade 6 – 12</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Class</label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">📚</span>
+                      <select
+                        value={searchClass}
+                        onChange={e => setSearchClass(e.target.value)}
+                        disabled={!category}
+                        style={{ ...selectBase, opacity: !category ? 0.5 : 1, cursor: !category ? 'not-allowed' : 'pointer' }}
+                        onFocus={e => { if (category) { e.target.style.borderColor = '#6366f1'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; } }}
+                        onBlur={e => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
+                      >
+                        <option value="">Select</option>
+                        {classOptions.map((c, i) => <option key={i} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Error */}
+              {errorMessage && (
+                <div className="mt-4 flex items-center gap-2.5 px-4 py-3 rounded-xl"
+                  style={{ background: '#fef2f2', border: '1.5px solid #fecaca' }}>
+                  <span className="text-base flex-shrink-0">⚠️</span>
+                  <p className="text-red-600 text-sm font-semibold">{errorMessage}</p>
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-5 font-black text-white text-base py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                style={{ background: 'linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899)', boxShadow: '0 4px 24px rgba(99,102,241,0.3)' }}>
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/><path d="M12 2a10 10 0 0 1 10 10"/>
+                    </svg>
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    Search Student Record
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Mobile trust */}
+            <div className="lg:hidden flex items-center justify-center gap-5 mt-5">
+              {['🔒 Secure', '✅ Verified', '🔏 Private'].map(t => (
+                <span key={t} className="text-xs font-bold text-gray-300">{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <FooterSection />

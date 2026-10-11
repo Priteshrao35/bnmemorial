@@ -1,58 +1,55 @@
-// pages/index.js
-'use client'
-import Image from 'next/image';
+'use client';
+import { useEffect, useState } from 'react';
+
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+const STAT_ICONS = ['/counter-icon-1.png', '/counter-icon-2.png', '/counter-icon-3.png', '/counter-icon-4.png'];
 
 export default function LearningEnvironment() {
+  const [settings, setSettings] = useState({});
+
+  useEffect(() => {
+    fetch(`${API}/apis/settings/`)
+      .then(r => r.json())
+      .then(rows => {
+        const map = {};
+        rows.forEach(r => { map[r.key] = r.value; });
+        setSettings(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  const stats = [
+    { count: settings.total_students || '3500+', label: 'Students Enrolled',   img: STAT_ICONS[0] },
+    { count: settings.experience_years || '35+', label: 'Years of Excellence', img: STAT_ICONS[1] },
+    { count: settings.total_teachers  || '120+', label: 'Expert Teachers',     img: STAT_ICONS[2] },
+    { count: settings.board_result    || '100%', label: 'Board Results',       img: STAT_ICONS[3] },
+  ];
+
   return (
     <div className="bg-white">
-      <section className="w-full bg-cover bg-center" style={{ backgroundImage: 'url(/counter-bg-1.png)' }}>
+      <section className="w-full bg-cover bg-center" style={{ backgroundImage: 'url(/counter-bg-1.png)', backgroundColor: '#1e3a8a' }}>
         <div className="container mx-auto py-10">
           <div className="text-center py-10">
-            <h2 className="mt-[-8px] mb-6 text-5xl font-bold text-white">Unique Learning Environment</h2>
-            <p className="mt-2 md:px-40 text-lg text-white">
-              Here is what you can expect from a house cleaning from a Handy professional. Download the app to share further cleaning details and instructions!
+            <h2 className="mt-0 mb-4 text-4xl md:text-5xl font-bold text-white">Unique Learning Environment</h2>
+            <p className="mt-2 md:px-40 text-base md:text-lg text-blue-100 max-w-3xl mx-auto">
+              Fostering excellence through modern infrastructure, dedicated faculty, and a student-centred approach that prepares every learner for a bright future.
             </p>
           </div>
 
-          <div className="flex flex-nowrap justify-center px-5 md:px-0">
-            <CounterBox count="3,500" label="Students Enrolled" imgSrc="/counter-icon-1.png" position="up" />
-            <CounterBox count="912" label="Best Awards Won" imgSrc="/counter-icon-2.png" position="down" />
-            <CounterBox count="370" label="Classes Completed" imgSrc="/counter-icon-3.png" position="up" />
-            <CounterBox count="648" label="Our Total Courses" imgSrc="/counter-icon-4.png" position="down" />
+          <div className="flex flex-wrap justify-center px-5 md:px-0 gap-4">
+            {stats.map(({ count, label, img }, i) => (
+              <div key={i} className="flex flex-col items-center w-36 md:w-40">
+                <div className={`mb-3 transition-transform duration-300 hover:scale-110 ${i % 2 === 0 ? '-mt-4' : 'mt-4'}`}>
+                  <img src={img} alt={label} width={100} height={100} className="object-contain" />
+                </div>
+                <h2 className="mb-1 text-3xl md:text-4xl font-black text-white">{count}</h2>
+                <p className="text-sm text-blue-200 text-center font-medium">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-      <style jsx>{`
-        @keyframes vibrate {
-          0% { transform: translateY(0); }
-          25% { transform: translateY(-3px); }
-          50% { transform: translateY(3px); }
-          75% { transform: translateY(-1px); }
-          100% { transform: translateY(0); }
-        }
-        
-        .vibrate {
-          animation: vibrate 0.3s infinite;
-        }
-      `}</style>
-    </div>
-  );
-}
-
-const CounterBox = ({ count, label, imgSrc, position }) => {
-  return (
-    <div className={`m-5 flex flex-col items-center w-1/6 relative`}>
-      <div className={`mb-2 transition-transform duration-300 transform hover:scale-110 ${position === 'up' ? '-mt-6' : 'mt-6'}`}>
-        <Image
-          src={imgSrc}
-          alt={label}
-          width={160} // Increased size
-          height={160} // Increased size
-          className={`filter-shadow hover:vibrate`} // Add vibrate effect on hover
-        />
-      </div>
-      <h2 className="mb-2 text-4xl font-semibold text-white">{count}</h2>
-      <p className="text-sm text-white">{label}</p>
     </div>
   );
 }

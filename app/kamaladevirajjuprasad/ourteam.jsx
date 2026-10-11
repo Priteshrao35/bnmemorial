@@ -1,121 +1,169 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
-const OurTeam = () => {
-  const [staffMembers, setStaffMembers] = useState([]);
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+const GRAD = [
+  'from-blue-500 to-indigo-600',
+  'from-violet-500 to-purple-600',
+  'from-emerald-500 to-teal-600',
+  'from-rose-500 to-pink-600',
+  'from-amber-500 to-orange-600',
+  'from-cyan-500 to-blue-600',
+];
+
+function StaffCard({ staff, index }) {
+  const initials = staff.full_name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const grad = GRAD[index % GRAD.length];
+
+  return (
+    <div className="group relative bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+
+      {/* Photo / Avatar area */}
+      <div className="relative overflow-hidden" style={{ paddingTop: '100%' }}>
+        {staff.Profile_Pic ? (
+          <img
+            src={staff.Profile_Pic}
+            alt={staff.full_name}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className={`absolute inset-0 bg-gradient-to-br ${grad} flex items-center justify-center`}>
+            <span className="text-white font-black text-4xl drop-shadow-lg">{initials}</span>
+          </div>
+        )}
+
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        {/* Class badge */}
+        {staff.class_name && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-blue-700 text-[10px] font-black px-2.5 py-1 rounded-full shadow-sm border border-blue-100">
+            Class {staff.class_name}
+          </div>
+        )}
+
+        {/* Name overlay on hover */}
+        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <p className="text-white font-black text-sm leading-tight drop-shadow">{staff.full_name}</p>
+        </div>
+      </div>
+
+      {/* Info strip */}
+      <div className="px-3 py-3">
+        <p className="font-black text-gray-800 text-sm leading-tight truncate">{staff.full_name}</p>
+        <p className={`text-xs font-bold mt-0.5 truncate bg-gradient-to-r ${grad} bg-clip-text text-transparent`}>
+          {staff.position || staff.specialization}
+        </p>
+        {staff.degree && (
+          <p className="text-gray-400 text-[10px] mt-1 truncate">{staff.degree}</p>
+        )}
+      </div>
+
+      {/* Bottom gradient accent */}
+      <div className={`h-1 w-0 group-hover:w-full bg-gradient-to-r ${grad} transition-all duration-300`} />
+    </div>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden shadow-md animate-pulse border border-gray-100">
+      <div className="bg-gray-100" style={{ paddingTop: '100%' }} />
+      <div className="px-3 py-3 space-y-2">
+        <div className="h-4 bg-gray-100 rounded-full w-3/4" />
+        <div className="h-3 bg-gray-100 rounded-full w-1/2" />
+      </div>
+      <div className="h-1 bg-gray-100" />
+    </div>
+  );
+}
+
+const TABS = [
+  { key: 'all',    label: 'All Staff',          icon: '👥' },
+  { key: 'junior', label: 'Jr. School (LKG–V)', icon: '🎒' },
+  { key: 'senior', label: 'Sr. School (VI–XII)', icon: '🎓' },
+];
+
+const ROWS = 2;
+const COLS = 6; // xl grid-cols-6
+const PAGE_SIZE = ROWS * COLS; // 12 cards = 2 rows
+
+export default function OurTeam() {
+  const [staff, setStaff]     = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const staffPerPage = 8;
+  const [tab, setTab]         = useState('all');
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/staff/');
-        const data = await response.json();
-        const category1Staff = data.filter(staff => staff.category === 2);
-        setStaffMembers(category1Staff);
-      } catch (error) {
-        console.error("Error fetching staff data: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStaffData();
+    fetch(`${API}/apis/staff/`)
+      .then(r => r.json()).then(setStaff)
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const indexOfLastStaff = currentPage * staffPerPage;
-  const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
-  const currentStaff = staffMembers.slice(indexOfFirstStaff, indexOfLastStaff);
+  const filtered = tab === 'all'    ? staff
+    : tab === 'junior' ? staff.filter(s => s.category === 1)
+    : staff.filter(s => s.category === 2);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  if (loading) {
-    return <div className="text-center text-blue-950 text-xl font-semibold">Loading...</div>;
-  }
+  const visible = showAll ? filtered : filtered.slice(0, PAGE_SIZE);
+  const hasMore = filtered.length > PAGE_SIZE;
 
   return (
-    <div className="bg-gradient-to-b from-white to-gray-100 md:px-20 pb-10">
-      <section className="py-12 text-center">
-        <h2 className="text-5xl font-extrabold text-blue-950 mb-6 tracking-wide">Meet Our Team</h2>
-        <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-          Get to know the talented individuals who make our institution exceptional.
-        </p>
-      </section>
+    <section className="w-full py-14 bg-gray-50">
+      <div className="w-full px-4 sm:px-8 lg:px-16">
 
-      <section className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
-          {currentStaff.map((staff, index) => (
-            <StaffCard key={index} staff={staff} />
-          ))}
+        {/* Header */}
+        <div className="text-center mb-10">
+          <span className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 font-black text-xs px-5 py-2 rounded-full mb-4 border border-blue-100 shadow-sm">
+            👩‍🏫 Our Educators
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900">Meet Our Team</h2>
+          <p className="text-gray-400 text-sm mt-2">Dedicated educators who inspire and empower every student</p>
+          <div className="w-12 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
         </div>
-      </section>
 
-      <div className="flex justify-center mt-12">
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage * staffPerPage >= staffMembers.length}
-          className="px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const StaffCard = ({ staff }) => {
-  const socialIcons = {
-    facebook: <FaFacebook />,
-    twitter: <FaTwitter />,
-    instagram: <FaInstagram />,
-    whatsapp: <FaWhatsapp />,
-  };
-
-  return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition duration-300">
-      <div className="relative w-full h-52 md:mt-5">
-        <Image
-          src={staff.Profile_Pic || "/staff-fallback.jpg"}
-          alt={staff.full_name}
-          fill
-          className="object-contain rounded-t-lg"
-        />
-      </div>
-      <div className="p-6 text-center">
-        <h3 className="text-xl font-bold text-blue-950">{staff.full_name}</h3>
-        <p className="text-gray-500">{staff.position}</p>
-        <p className="mt-4 text-sm text-gray-600">
-          <strong>Degree:</strong> {staff.degree} <br />
-          <strong>Specialization:</strong> {staff.specialization} <br />
-          <strong>Class:</strong> {staff.class_name}
-        </p>
-        <div className="flex justify-center space-x-3 mt-4">
-          {staff.socialLinks?.map((link, index) => (
-            <a
-              key={index}
-              href={link.url}
-              className="text-2xl text-gray-400 hover:text-blue-600 transition"
-              target="_blank"
-              rel="noopener noreferrer"
+        {/* Tabs + View All */}
+        <div className="flex justify-center items-center gap-3 mb-8 flex-wrap">
+          <div className="inline-flex bg-white rounded-2xl p-1 gap-1 shadow-md border border-gray-100">
+            {TABS.map(t => (
+              <button key={t.key} onClick={() => { setTab(t.key); setShowAll(false); }}
+                className={`flex items-center gap-1.5 px-4 py-2 text-xs font-black rounded-xl transition-all duration-200
+                  ${tab === t.key
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
+                <span>{t.icon}</span>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          {!loading && hasMore && (
+            <button
+              onClick={() => setShowAll(v => !v)}
+              className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-[11px] px-4 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200"
             >
-              {socialIcons[link.platform]}
-            </a>
-          ))}
+              {showAll ? '↑ Show Less' : `👥 View All ${filtered.length} →`}
+            </button>
+          )}
         </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {loading
+            ? Array.from({ length: PAGE_SIZE }).map((_, i) => <Skeleton key={i} />)
+            : visible.map((s, i) => <StaffCard key={s.id} staff={s} index={i} />)
+          }
+        </div>
+
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-16 text-gray-400">
+            <p className="text-4xl mb-2">👩‍🏫</p>
+            <p className="text-sm font-semibold">No staff members found in this category.</p>
+          </div>
+        )}
+
       </div>
-    </div>
+    </section>
   );
-};
-
-
-export default OurTeam;
+}

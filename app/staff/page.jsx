@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
-import Header from '../kamaladevirajjuprasad/headersection';
 import FooterSection from '../kamaladevirajjuprasad/footersections';
 
 function StaffForm() {
@@ -82,7 +81,7 @@ function StaffForm() {
 
     try {
       const response = await axios.post(
-        'https://bnmemorials.pythonanywhere.com/apis/staff/',
+        `${process.env.NEXT_PUBLIC_API_URL}/apis/staff/`,
         dataToSend,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
@@ -114,7 +113,6 @@ function StaffForm() {
 
   return (
     <div>
-      <Header />
       <Navbar />
       <div className="min-h-screen md:pt-28 bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 px-8 md:px-32 py-16">
         <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">

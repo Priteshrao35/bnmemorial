@@ -1,45 +1,30 @@
 import React from "react";
-import Image from "next/image"; // Import Image component from Next.js
 
-const PartnerSection = () => {
-  const partners = [
-    "partner-logo-3.jpg",
-    "partner-logo-4.jpg",
-    "partner-logo-5.jpg",
-    "partner-logo-1.jpg",
-    "partner-logo-2.jpg",
-    "partner-logo-5.jpg",
-  ];
+const PARTNERS = [
+  { name: "CBSE Board", logo: "/cbse-logo.png" },
+  { name: "National Cadet Corps", logo: "/ncc-logo.png" },
+  { name: "Scouts & Guides", logo: "/scouts-logo.png" },
+  { name: "Red Cross", logo: "/redcross-logo.png" },
+  { name: "Sports Authority", logo: "/sports-logo.png" },
+  { name: "Digital India", logo: "/digitalindia-logo.png" },
+];
 
-  return (
-    <section className="elementor-section elementor-top-section py-5 bg-white">
-      <div className="container mx-auto">
-        <div className="partner">
-          <div className="partner-slider">
-            <div className="slick-list draggable">
-              {/* Adjust the flex layout for mobile responsiveness */}
-              <div className="slick-track grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {partners.map((partner, index) => (
-                  <div key={index} className="single-partner">
-                    <div className="px-4 md:px-8 lg:px-10">
-                      <Image
-                        src={`https://kidbawp.codebasket.xyz/wp-content/uploads/2023/03/${partner}`}
-                        alt={partner}
-                        width={200} // Adjust the width for the logos
-                        height={100} // Adjust the height for the logos
-                        loading="lazy"
-                        className="h-auto w-full object-contain rounded-lg"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+const PartnerSection = () => (
+  <section className="py-5 bg-gray-50 border-y border-gray-100">
+    <div className="container mx-auto px-4">
+      <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">
+        Affiliated & Associated With
+      </p>
+      <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+        {["CBSE Board", "NCC", "Scouts & Guides", "Red Cross Society", "Sports Authority of India", "Digital India"].map((name) => (
+          <div key={name}
+            className="px-5 py-2.5 bg-white rounded-xl shadow-sm border border-gray-100 text-sm font-semibold text-gray-500 hover:text-blue-700 hover:border-blue-200 transition">
+            {name}
           </div>
-        </div>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default PartnerSection;

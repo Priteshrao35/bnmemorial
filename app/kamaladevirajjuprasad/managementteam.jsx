@@ -3,87 +3,116 @@ import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse rounded-3xl overflow-hidden bg-white/10">
+      <div className="w-full h-72 bg-white/10" />
+      <div className="p-5 space-y-3">
+        <div className="h-4 bg-white/20 rounded-full w-2/3 mx-auto" />
+        <div className="h-3 bg-white/10 rounded-full" />
+        <div className="h-3 bg-white/10 rounded-full w-4/5" />
+      </div>
+    </div>
+  );
+}
 
 export default function ManagementTeam() {
-  const [managementData, setManagementData] = useState([]); // State to store API data
-  const [loading, setLoading] = useState(true); // State to handle loading state
+  const [data, setData]       = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch management data from the API
   useEffect(() => {
-    const fetchManagementData = async () => {
-      try {
-        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/ourmanagement/');
-        const data = await response.json();
-        setManagementData(data); // Set the fetched data to state
-      } catch (error) {
-        console.error("Error fetching management data: ", error);
-      } finally {
-        setLoading(false); // Stop loading once data is fetched
-      }
-    };
-
-    fetchManagementData();
-  }, []); // Empty dependency array means this effect runs once when the component mounts
-
-  // Render loading message if data is still being fetched
-  if (loading) {
-    return <div className="text-center text-white">Loading...</div>;
-  }
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/apis/ourmanagement/`)
+      .then(r => r.json()).then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
-    <div className="mx-auto p-4 bg-blue-950 px-4 sm:px-10 lg:px-40"> {/* Adjusted padding for mobile */}
-      <h2 className="md:text-4xl text-2xl font-bold text-center mb-6 text-white mt-5">Our Management Team</h2>
-      <Swiper
-        slidesPerView={1} // Default for mobile
-        spaceBetween={20} // Space between slides for mobile
-        pagination={{
-          clickable: true,
-        }}
-        modules={[Pagination]}
-        className="mySwiper"
-        breakpoints={{
-          640: {
-            slidesPerView: 2, // Show 2 slides on small screens
-            spaceBetween: 20,
-          },
-          768: {
-            slidesPerView: 3, // Show 3 slides on medium screens
-            spaceBetween: 30,
-          },
-          1024: {
-            slidesPerView: 3, // Show 3 slides on larger screens
-            spaceBetween: 30,
-          },
-        }}
-      >
-        {managementData.map((item) => (
-          <SwiperSlide
-            key={item.id}
-            className="flex flex-col items-center bg-white relative group h-60 transition-all duration-300 ease-in-out transform hover:bg-blue-500 rounded-lg"
+    <section className="w-full py-16 relative overflow-hidden"
+      style={{ background: 'linear-gradient(160deg,#0f172a 0%,#1e3a8a 50%,#1e1b4b 100%)' }}>
+
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-indigo-600/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
+
+      <div className="w-full px-4 sm:px-8 lg:px-16 relative z-10">
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 bg-white/10 text-blue-200 font-black text-xs px-5 py-2 rounded-full mb-4 border border-white/20">
+            👔 Leadership
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-black text-white">Our Management Team</h2>
+          <p className="text-blue-300 text-sm mt-2">The visionaries guiding our institution forward</p>
+          <div className="w-12 h-1 bg-blue-400 mx-auto mt-4 rounded-full" />
+        </div>
+
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3].map(i => <Skeleton key={i} />)}
+          </div>
+        ) : (
+          <Swiper
+            slidesPerView={1}
+            spaceBetween={24}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            modules={[Pagination, Autoplay]}
+            breakpoints={{
+              640:  { slidesPerView: 2, spaceBetween: 20 },
+              1024: { slidesPerView: 3, spaceBetween: 28 },
+            }}
+            className="pb-12"
           >
-            <div className="overflow-hidden w-full h-[15em] relative mb-4">
-              <img
-                src={item.image || "/team-2.jpg"} // Use default image if no profile picture
-                alt={item.title}
-                className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="px-3 flex-grow flex flex-col items-center justify-center">
-              <h3 className="text-xl font-semibold text-blue-900 text-center group-hover:text-white">
-                {item.title}
-              </h3>
-              <p className="text-blue-400 font-bold text-center group-hover:text-white">
-                {/* This can be updated to show relevant information */}
-                {item.description ? item.description.substring(0, 50) + '...' : 'No Description'}
-              </p>
-              <p className="text-black p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white text-center">
-                {item.description}
-              </p>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
+            {data.map((item, idx) => (
+              <SwiperSlide key={item.id}>
+                <div className="group relative rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full"
+                  style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+
+                  {/* Photo */}
+                  <div className="relative overflow-hidden" style={{ height: 280 }}>
+                    <img
+                      src={item.image || '/team-2.jpg'}
+                      alt={item.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                    {/* Index badge */}
+                    <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-black text-xs shadow-lg">
+                      {String(idx + 1).padStart(2, '0')}
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-5">
+                    <h3 className="font-black text-white text-base leading-snug mb-2 group-hover:text-blue-300 transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <div className="w-8 h-0.5 bg-blue-400 rounded-full mb-3 group-hover:w-16 transition-all duration-300" />
+                    <p className="text-blue-200/80 text-xs leading-relaxed line-clamp-3">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  {/* Hover glow border */}
+                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{ boxShadow: 'inset 0 0 0 1.5px rgba(96,165,250,0.5)' }} />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
+      </div>
+
+      <style jsx global>{`
+        .swiper-pagination-bullet { background: rgba(255,255,255,0.4) !important; }
+        .swiper-pagination-bullet-active { background: #60a5fa !important; width: 20px !important; border-radius: 4px !important; }
+      `}</style>
+    </section>
   );
 }

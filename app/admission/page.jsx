@@ -1,324 +1,365 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 import Navbar from '../kamaladevirajjuprasad/navigationbar';
-import Header from '../kamaladevirajjuprasad/headersection';
 import FooterSection from '../kamaladevirajjuprasad/footersections';
 
-function AdmissionForm() {
-  const [formData, setFormData] = useState({
-    studentName: '',
-    fathersName: '',
-    mothersName: '',
-    currentSchool: '',
-    address: '',
-    admissionClass: '',
-    dob: '',
-    gender: '',
-    contact: '',
-    pincode: '',
+/* ── shared input class ── */
+const inp = 'w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm';
+const sel = inp + ' cursor-pointer';
+
+/* ── field wrapper ── */
+function Field({ label, children }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-xs font-black text-gray-600 uppercase tracking-wider">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+/* ── success popup ── */
+function SuccessPopup({ data, onClose }) {
+  const rows = [
+    ['👤 Student Name', data.student_name],
+    ["👨 Father's Name", data.fathers_name],
+    ["👩 Mother's Name", data.mothers_name],
+    ['🏫 Current School', data.current_school],
+    ['📚 Class', data.admission_class],
+    ['🎂 Date of Birth', data.dob],
+    ['⚧ Gender', data.gender],
+    ['📞 Contact', data.contact],
+    ['📍 Pincode', data.pincode],
+    ['💳 Fee', data.fee ? `₹${data.fee}` : '—'],
+    ['🆔 Admission ID', `#${data.id}`],
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-emerald-500 to-teal-600 px-8 py-8 text-center overflow-hidden">
+          <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/10" />
+          <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-white/10" />
+          <div className="relative">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-4xl mx-auto mb-3">🎉</div>
+            <h3 className="text-white text-xl font-black">Application Submitted!</h3>
+            <p className="text-emerald-100 text-sm mt-1">Our team will contact you within 24 hours.</p>
+          </div>
+        </div>
+
+        {/* Details */}
+        <div className="px-6 py-5 space-y-2.5 max-h-72 overflow-y-auto">
+          {rows.map(([k, v]) => v && (
+            <div key={k} className="flex items-start justify-between gap-4 text-sm py-2 border-b border-gray-50 last:border-0">
+              <span className="text-gray-500 font-semibold flex-shrink-0">{k}</span>
+              <span className="text-gray-900 font-bold text-right">{v}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="px-6 pb-6 pt-2 flex gap-3">
+          <button onClick={onClose}
+            className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black py-3 rounded-xl hover:opacity-90 transition shadow-lg">
+            Done ✓
+          </button>
+          <Link href="/kamaladevirajjuprasad/payments"
+            className="flex-1 text-center bg-blue-50 text-blue-700 font-black py-3 rounded-xl hover:bg-blue-100 transition">
+            Pay Fee →
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── main ── */
+export default function AdmissionForm() {
+  const [form, setForm] = useState({
+    studentName: '', fathersName: '', mothersName: '', currentSchool: '',
+    address: '', admissionClass: '', dob: '', gender: '', contact: '', pincode: '',
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [studentDetails, setStudentDetails] = useState(null);
 
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [studentDetails, setStudentDetails] = useState(null); // To hold student data after submission
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // To manage popup visibility
-
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-
-    if (name === 'contact' || name === 'pincode') {
-      const numericValue = value.replace(/[^0-9]/g, '');
-      setFormData({ ...formData, [name]: numericValue });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const v = (name === 'contact' || name === 'pincode') ? value.replace(/\D/g, '') : value;
+    setForm(f => ({ ...f, [name]: v }));
+    if (error) setError('');
   };
 
-  const validateForm = () => {
-    const { studentName, fathersName, mothersName, currentSchool, address, admissionClass, dob, gender, contact, pincode } = formData;
-
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const { studentName, fathersName, mothersName, currentSchool, address, admissionClass, dob, gender, contact, pincode } = form;
     if (!studentName || !fathersName || !mothersName || !currentSchool || !address || !admissionClass || !dob || !gender || !contact || !pincode) {
-      setError('All fields marked with * are required.');
-      return false;
+      setError('Please fill in all required fields.'); return;
     }
-
-    if (!/^\d+$/.test(contact)) {
-      setError('Contact number must be numeric.');
-      return false;
-    }
-
-    if (!/^\d+$/.test(pincode)) {
-      setError('Pincode must be numeric.');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!validateForm()) {
-      return; // Don't submit if form validation fails
-    }
-
+    setLoading(true); setError('');
     try {
-      const response = await axios.post('https://bnmemorials.pythonanywhere.com/apis/admissions/', {
-        student_name: formData.studentName,
-        fathers_name: formData.fathersName,
-        mothers_name: formData.mothersName,
-        current_school: formData.currentSchool,
-        address: formData.address,
-        admission_class: formData.admissionClass,
-        dob: formData.dob,
-        gender: formData.gender,
-        contact: formData.contact,
-        pincode: formData.pincode,
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/apis/admissions/`, {
+        student_name: studentName, fathers_name: fathersName, mothers_name: mothersName,
+        current_school: currentSchool, address, admission_class: admissionClass,
+        dob, gender, contact, pincode,
       });
-
-      if (response.status === 201) {
-        setSuccessMessage('Your admission request has been successfully submitted.');
-
-        // Wait for a short time to ensure response has been processed
-        setTimeout(() => {
-          setStudentDetails(response.data); // Store the student details returned by the API
-          setFormData({
-            studentName: '',
-            fathersName: '',
-            mothersName: '',
-            currentSchool: '',
-            address: '',
-            admissionClass: '',
-            dob: '',
-            gender: '',
-            contact: '',
-            pincode: '',
-          });
-          setError(null);
-          setIsPopupOpen(true); // Open the popup after receiving the student data
-        }, 1000); // Delay for 1 second (adjust as needed)
-
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 2000);
-      } else {
-        alert('Submission failed. Please try again.');
+      if (res.status === 201) {
+        setStudentDetails(res.data);
+        setForm({ studentName:'',fathersName:'',mothersName:'',currentSchool:'',address:'',admissionClass:'',dob:'',gender:'',contact:'',pincode:'' });
+        setSubmitted(true);
       }
-    } catch (error) {
-      console.error('Error submitting the form:', error);
-      setError('An error occurred while submitting the form. Please try again later.');
+    } catch {
+      setError('Submission failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const closePopup = () => {
-    setIsPopupOpen(false); // Close the popup when the user clicks close
   };
 
   return (
-    <div>
-      <Header />
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="bg-gradient-to-r from-blue-500 to-blue-300 py-12 px-6 md:pt-28 sm:px-8 md:px-16">
-        <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold text-center text-black mb-6">Online Admission & Registration</h2>
 
-          {error && <div className="text-red-600 text-center mb-4 text-xl">{error}</div>}
-          {successMessage && <div className="text-green-600 text-center mb-4 text-xl">{successMessage}</div>}
+      {/* ── HERO ── */}
+      <section className="relative w-full overflow-hidden"
+        style={{ background: 'linear-gradient(120deg,#0f172a 0%,#1e3a8a 50%,#0891b2 100%)' }}>
+        <div className="absolute inset-0 opacity-[0.07]"
+          style={{ backgroundImage: 'radial-gradient(#fff 1px,transparent 1px)', backgroundSize: '26px 26px' }} />
+        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-blue-500/25 blur-[90px]" />
+        <div className="absolute -bottom-16 right-10 w-72 h-72 rounded-full bg-cyan-400/20 blur-[70px]" />
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column */}
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="studentName">Student Name *</label>
-                  <input
-                    type="text"
-                    id="studentName"
-                    name="studentName"
-                    value={formData.studentName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter student's name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="fathersName">Father&apos;s Name *</label>
-                  <input
-                    type="text"
-                    id="fathersName"
-                    name="fathersName"
-                    value={formData.fathersName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border rounded-md text-black shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter father's name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="mothersName">Mother&apos;s Name *</label>
-                  <input
-                    type="text"
-                    id="mothersName"
-                    name="mothersName"
-                    value={formData.mothersName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter mother's name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="currentSchool">Current School Name*</label>
-                  <input
-                    type="text"
-                    id="currentSchool"
-                    name="currentSchool"
-                    value={formData.currentSchool}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter current school"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="address">Address *</label>
-                  <textarea
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter address"
-                  ></textarea>
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="admissionClass">Class *</label>
-                  <select
-                    id="admissionClass"
-                    name="admissionClass"
-                    value={formData.admissionClass}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select class for admission</option>
-                    <option value="UKG">UKG</option>
-                    <option value="LKG">LKG</option>
-                    {Array.from({ length: 12 }, (_, i) => (
-                      <option key={i + 1} value={i + 1}>
-                        Class {i + 1}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="dob">Date of Birth *</label>
-                  <input
-                    type="date"
-                    id="dob"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="gender">Gender *</label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">- PLEASE SELECT -</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="contact">Contact No. *</label>
-                  <input
-                    type="tel"
-                    id="contact"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter contact number"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-black" htmlFor="pincode">Pincode *</label>
-                  <input
-                    type="text"
-                    id="pincode"
-                    name="pincode"
-                    value={formData.pincode}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border text-black rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter pincode"
-                  />
-                </div>
-              </div>
+        <div className="relative w-full px-5 sm:px-10 lg:px-20 py-12 sm:py-16 flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
+          {/* Text */}
+          <div className="text-center lg:text-left flex-1">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white text-[11px] font-black px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+              <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+              Admissions Open 2025–26
             </div>
-
-            {/* Submit Button */}
-            <div className="text-center mt-8">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-3 w-[30em] px-8 rounded-lg text-xl shadow-md hover:bg-blue-600 transition duration-300"
-              >
-                Submit
-              </button>
+            <h1 className="text-4xl sm:text-5xl font-black text-white leading-[1.1] mb-4">
+              Online Admission<br />
+              <span className="bg-gradient-to-r from-amber-300 via-orange-300 to-yellow-200 bg-clip-text text-transparent">& Registration</span>
+            </h1>
+            <p className="text-blue-200/90 text-sm sm:text-base leading-relaxed max-w-md">
+              Join Kamala Devi Rajju Prasad Inter College — where every child gets the care, knowledge and opportunity they deserve.
+            </p>
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-3 mt-7 justify-center lg:justify-start">
+              {[['🏆','CBSE Affiliated'],['📚','LKG – Class 8'],['✅','100% Results'],['🛡️','Safe Campus']].map(([ic,lb])=>(
+                <div key={lb} className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1.5 text-white text-xs font-semibold">
+                  <span>{ic}</span>{lb}
+                </div>
+              ))}
             </div>
-          </form>
+          </div>
+
+          {/* Mini steps */}
+          <div className="hidden lg:flex flex-col gap-3 flex-shrink-0 w-64">
+            {[
+              { n: '1', t: 'Fill the form below' },
+              { n: '2', t: 'Team contacts you' },
+              { n: '3', t: 'Appear for assessment' },
+              { n: '4', t: 'Pay fee & get enrolled' },
+            ].map(({ n, t }) => (
+              <div key={n} className="flex items-center gap-3 bg-white/10 border border-white/15 rounded-xl px-4 py-3">
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white font-black text-sm flex items-center justify-center flex-shrink-0">{n}</span>
+                <span className="text-white text-sm font-semibold">{t}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Popup for displaying student details */}
-      {isPopupOpen && studentDetails && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-gradient-to-t from-green-700 to-indigo-0 p-6 rounded-lg shadow-lg w-96">
-            <p><strong>Student Name:</strong> {studentDetails.student_name}</p>
-            <p><strong>Father&apos;s Name:</strong> {studentDetails.fathers_name}</p>
-            <p><strong>Mother&apos;s Name:</strong> {studentDetails.mothers_name}</p>
-            <p><strong>Current School:</strong> {studentDetails.current_school}</p>
-            <p><strong>Address:</strong> {studentDetails.address}</p>
-            <p><strong>Class:</strong> {studentDetails.admission_class}</p>
-            <p><strong>Date of Birth:</strong> {studentDetails.dob}</p>
-            <p><strong>Gender:</strong> {studentDetails.gender}</p>
-            <p><strong>Contact:</strong> {studentDetails.contact}</p>
-            <p><strong>Pincode:</strong> {studentDetails.pincode}</p>
-            <p><strong>Fee:</strong> {studentDetails.fee}</p>
-            <p><strong>Admission ID:</strong> {studentDetails.id}</p>
+        <svg viewBox="0 0 1440 48" className="w-full block" preserveAspectRatio="none" style={{ height: 48, marginBottom: -1 }}>
+          <path d="M0,48 C360,0 1080,0 1440,48 L1440,48 L0,48 Z" fill="#f9fafb" />
+        </svg>
+      </section>
 
-            <div className="text-center mt-4">
-              <button
-                onClick={closePopup}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-                Close
+      {/* ── FORM ── */}
+      <section className="w-full px-5 sm:px-10 lg:px-20 py-14">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+
+          {/* ── Left: form card ── */}
+          <div className="flex-1 bg-white rounded-3xl shadow-xl ring-1 ring-gray-100 overflow-hidden">
+            {/* Card header */}
+            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-8 py-6 flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl">📋</div>
+              <div>
+                <h2 className="text-white font-black text-xl">Admission Form</h2>
+                <p className="text-blue-200 text-xs mt-0.5">All fields marked * are required</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6">
+              {/* Error */}
+              {error && (
+                <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-4 py-3 rounded-xl">
+                  ⚠️ {error}
+                </div>
+              )}
+
+              {/* Section: Student */}
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-blue-700 mb-4 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-blue-100" /> Student Details <span className="h-px flex-1 bg-blue-100" />
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="Student Name *">
+                    <input name="studentName" value={form.studentName} onChange={handleChange}
+                      placeholder="Enter full name" className={inp} />
+                  </Field>
+                  <Field label="Class *">
+                    <select name="admissionClass" value={form.admissionClass} onChange={handleChange} className={sel}>
+                      <option value="">Select class</option>
+                      <option value="LKG">LKG</option>
+                      <option value="UKG">UKG</option>
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i} value={i + 1}>Class {i + 1}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Date of Birth *">
+                    <input type="date" name="dob" value={form.dob} onChange={handleChange} className={inp} />
+                  </Field>
+                  <Field label="Gender *">
+                    <select name="gender" value={form.gender} onChange={handleChange} className={sel}>
+                      <option value="">Select gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </Field>
+                </div>
+              </div>
+
+              {/* Section: Parents */}
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-700 mb-4 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-indigo-100" /> Parent Details <span className="h-px flex-1 bg-indigo-100" />
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="Father's Name *">
+                    <input name="fathersName" value={form.fathersName} onChange={handleChange}
+                      placeholder="Enter father's name" className={inp} />
+                  </Field>
+                  <Field label="Mother's Name *">
+                    <input name="mothersName" value={form.mothersName} onChange={handleChange}
+                      placeholder="Enter mother's name" className={inp} />
+                  </Field>
+                  <Field label="Contact No. *">
+                    <input type="tel" name="contact" value={form.contact} onChange={handleChange}
+                      placeholder="10-digit mobile number" maxLength={10} className={inp} />
+                  </Field>
+                  <Field label="Pincode *">
+                    <input name="pincode" value={form.pincode} onChange={handleChange}
+                      placeholder="6-digit pincode" maxLength={6} className={inp} />
+                  </Field>
+                </div>
+              </div>
+
+              {/* Section: School & Address */}
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-cyan-700 mb-4 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-cyan-100" /> School & Address <span className="h-px flex-1 bg-cyan-100" />
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="Current School Name *">
+                    <input name="currentSchool" value={form.currentSchool} onChange={handleChange}
+                      placeholder="Previous / current school" className={inp} />
+                  </Field>
+                  <Field label="Address *">
+                    <textarea name="address" value={form.address} onChange={handleChange} rows={3}
+                      placeholder="Full residential address" className={inp + ' resize-none'} />
+                  </Field>
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button type="submit" disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 disabled:opacity-60 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-700/30 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-3 text-base">
+                {loading ? (
+                  <><span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Submitting…</>
+                ) : (
+                  <> Submit Application →</>
+                )}
               </button>
+
+              <p className="text-center text-gray-400 text-xs">
+                By submitting, you agree to our admission terms. Our counselor will call within 24 hours.
+              </p>
+            </form>
+          </div>
+
+          {/* ── Right: info sidebar ── */}
+          <div className="lg:w-80 space-y-5 flex-shrink-0">
+
+            {/* Why us */}
+            <div className="bg-white rounded-3xl shadow-lg ring-1 ring-gray-100 p-6">
+              <h3 className="font-black text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">🏫</span>
+                Why Choose Us?
+              </h3>
+              <ul className="space-y-3">
+                {[
+                  ['📚','CBSE curriculum with smart classes'],
+                  ['👩‍🏫','75+ experienced teachers'],
+                  ['🏆','100% board pass results'],
+                  ['🛡️','CCTV-secured safe campus'],
+                  ['🚌','Transport available'],
+                  ['🏅','Sports & cultural activities'],
+                ].map(([ic, t]) => (
+                  <li key={t} className="flex items-center gap-3 text-gray-700 text-sm">
+                    <span className="text-lg flex-shrink-0">{ic}</span>{t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div className="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-3xl p-6 text-white shadow-xl shadow-blue-700/30">
+              <h3 className="font-black mb-4 flex items-center gap-2">
+                <span className="text-xl">📞</span> Need Help?
+              </h3>
+              <p className="text-blue-200 text-sm mb-4">Our admission counselors are available Mon–Sat, 7:30 AM – 2 PM</p>
+              <a href="tel:+919810798015"
+                className="flex items-center gap-3 bg-white/15 hover:bg-white/25 border border-white/20 rounded-2xl px-4 py-3 transition">
+                <span className="text-2xl">📲</span>
+                <div>
+                  <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">Call Now</p>
+                  <p className="text-white font-black text-base">+91 98107 98015</p>
+                </div>
+              </a>
+              <Link href="/kamaladevirajjuprasad/addmissionprocess"
+                className="mt-3 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-2xl px-4 py-2.5 text-white text-sm font-bold transition">
+                View Admission Process →
+              </Link>
+            </div>
+
+            {/* Fee note */}
+            <div className="bg-amber-50 border border-amber-200 rounded-3xl p-5">
+              <h3 className="font-black text-amber-800 mb-2 flex items-center gap-2">
+                <span>💳</span> Fee Note
+              </h3>
+              <ul className="space-y-1.5 text-amber-700 text-xs leading-relaxed">
+                <li>• Application form: Rs. 500/-</li>
+                <li>• Admission fee: Rs. 20,000/- (one time)</li>
+                <li>• 10% sibling concession available</li>
+                <li>• 50% off for single girl child</li>
+              </ul>
+              <Link href="/kamaladevirajjuprasad/addmissionprocess"
+                className="mt-3 inline-flex text-xs font-black text-amber-700 hover:text-amber-900">
+                Full fee structure →
+              </Link>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Success Popup */}
+      {submitted && studentDetails && (
+        <SuccessPopup data={studentDetails} onClose={() => setSubmitted(false)} />
       )}
 
       <FooterSection />
     </div>
   );
 }
-
-export default AdmissionForm;

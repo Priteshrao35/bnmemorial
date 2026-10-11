@@ -1,112 +1,143 @@
 'use client';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import { useEffect, useState, useRef } from 'react';
+
+const GRAD = [
+  'from-blue-500 to-indigo-600',
+  'from-violet-500 to-purple-600',
+  'from-emerald-500 to-teal-600',
+  'from-rose-500 to-pink-600',
+  'from-amber-500 to-orange-600',
+  'from-cyan-500 to-blue-600',
+];
+
+function StaffCard({ staff, index }) {
+  const initials = staff.full_name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const grad = GRAD[index % GRAD.length];
+
+  return (
+    <div className="flex-shrink-0 w-52 bg-white shadow-md rounded-2xl p-5 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+      <div className={`relative w-24 h-24 mx-auto mb-4 rounded-full border-4 border-white shadow-md overflow-hidden`}>
+        {staff.Profile_Pic ? (
+          <img src={staff.Profile_Pic} alt={staff.full_name} loading="lazy" className="w-full h-full object-cover object-top" />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${grad} flex items-center justify-center`}>
+            <span className="text-white font-black text-2xl">{initials}</span>
+          </div>
+        )}
+      </div>
+      <h5 className="text-sm font-black text-blue-950 leading-tight truncate">{staff.full_name}</h5>
+      <p className={`text-xs font-bold mt-1 truncate bg-gradient-to-r ${grad} bg-clip-text text-transparent`}>
+        {staff.position || staff.specialization}
+      </p>
+      <div className="mt-3 text-xs text-gray-500 space-y-1 border-t border-gray-50 pt-3">
+        {staff.degree   && <p><span className="font-semibold text-gray-600">Degree:</span> {staff.degree}</p>}
+        {staff.class_name && <p><span className="font-semibold text-gray-600">Class:</span> {staff.class_name}</p>}
+      </div>
+    </div>
+  );
+}
+
+function StaffSkeleton() {
+  return (
+    <div className="flex-shrink-0 w-52 bg-white shadow rounded-2xl p-5 animate-pulse border border-gray-100">
+      <div className="w-24 h-24 rounded-full bg-gray-100 mx-auto mb-4" />
+      <div className="h-4 bg-gray-100 rounded-full w-3/4 mx-auto mb-2" />
+      <div className="h-3 bg-gray-100 rounded-full w-1/2 mx-auto mb-3" />
+      <div className="space-y-2 pt-3 border-t border-gray-50">
+        <div className="h-2 bg-gray-100 rounded-full" />
+        <div className="h-2 bg-gray-100 rounded-full w-4/5 mx-auto" />
+      </div>
+    </div>
+  );
+}
 
 const MeetOurStaff = () => {
   const [staffMembers, setStaffMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const staffPerPage = 8;
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        const response = await fetch('https://bnmemorials.pythonanywhere.com/apis/staff/');
-        const data = await response.json();
-        const category1Staff = data.filter(staff => staff.category === 1);
-        setStaffMembers(category1Staff);
-      } catch (error) {
-        console.error("Error fetching staff data: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStaffData();
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/apis/staff/`)
+      .then(r => r.json())
+      .then(data => {
+        const srSchool = data.filter(s => s.category === 2);
+        setStaffMembers(srSchool.length > 0 ? srSchool : data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const indexOfLastStaff = currentPage * staffPerPage;
-  const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
-  const currentStaff = staffMembers.slice(indexOfFirstStaff, indexOfLastStaff);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  if (loading) {
-    return <div className="text-center text-gray-800 text-xl font-semibold">Loading...</div>;
-  }
+  const scroll = (dir) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: dir * 280, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <div className="bg-gradient-to-b from-blue-100 to-white">
-      <section className="py-12">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-extrabold text-blue-950 mb-4">Meet Our Staff</h2>
-          <p className="text-lg text-gray-600">
-            Get to know the dedicated professionals who make our institution outstanding.
-          </p>
-        </div>
-      </section>
+    <div className="bg-gradient-to-b from-blue-50 to-white py-12">
+      {/* Header */}
+      <div className="text-center mb-8 px-4">
+        <span className="text-xs font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-4 py-1.5 rounded-full">
+          Our Educators
+        </span>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-blue-950 mt-4">Meet Our Senior Faculty</h2>
+        <p className="text-gray-500 mt-2 text-sm">
+          Experienced educators guiding Classes 6–12 at B.N. Memorial School.
+        </p>
+      </div>
 
-      <section className="container mx-auto px-6 md:px-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {currentStaff.map((staff, index) => (
-            <StaffCard key={index} staff={staff} />
-          ))}
-        </div>
-      </section>
+      {/* Horizontal scroll row */}
+      <div className="relative px-4">
+        {/* Left fade */}
+        <div className="absolute left-16 top-0 bottom-4 w-12 bg-gradient-to-r from-blue-50 to-transparent z-10 pointer-events-none" />
+        {/* Right fade */}
+        <div className="absolute right-16 top-0 bottom-4 w-12 bg-gradient-to-l from-blue-50 to-transparent z-10 pointer-events-none" />
 
-      <div className="flex justify-center mt-8">
+        {/* Left arrow button */}
         <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          onClick={() => scroll(-1)}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white border-2 border-blue-200 rounded-full shadow-lg flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white hover:border-blue-700 transition-all duration-200"
+          aria-label="Scroll left"
         >
-          Previous
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage * staffPerPage >= staffMembers.length}
-          className="ml-4 px-6 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  );
-};
 
-const StaffCard = ({ staff }) => {
-  return (
-    <div className="bg-white shadow-lg rounded-lg p-6 text-center transform hover:scale-105 transition duration-300">
-      <div className="relative w-40 h-40 mx-auto mb-4">
-        <Image
-          src={staff.Profile_Pic || "/default-profile.jpg"}
-          alt={staff.full_name}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-full"
-        />
+        {/* Right arrow button */}
+        <button
+          onClick={() => scroll(1)}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white border-2 border-blue-200 rounded-full shadow-lg flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white hover:border-blue-700 transition-all duration-200"
+          aria-label="Scroll right"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-4 px-10 scroll-smooth"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => <StaffSkeleton key={i} />)
+            : staffMembers.map((staff, i) => <StaffCard key={staff.id} staff={staff} index={i} />)
+          }
+        </div>
       </div>
-      <h5 className="text-xl font-semibold text-blue-950">{staff.full_name}</h5>
-      <p className="text-gray-600">{staff.position}</p>
-      <div className="mt-4 text-sm text-gray-700">
-        <p><strong>Degree:</strong> {staff.degree}</p>
-        <p><strong>Specialization:</strong> {staff.specialization}</p>
-        <p><strong>Class:</strong> {staff.class_name}</p>
-      </div>
-      <div className="mt-4 flex justify-center space-x-2">
-        {staff.socialLinks && staff.socialLinks.map((link, index) => (
-          <a
-            key={index}
-            href={link.url}
-            className={`p-2 text-white rounded-full ${link.bgColor} hover:opacity-80`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={link.name}
-          >
-            {link.icon}
-          </a>
-        ))}
-      </div>
+
+      {!loading && staffMembers.length === 0 && (
+        <div className="text-center py-10 text-gray-400">
+          <p className="text-4xl mb-2">👩‍🏫</p>
+          <p className="text-sm font-semibold">No faculty added yet.</p>
+          <p className="text-xs mt-1">Add staff from Admin → Staff (Sr. School category)</p>
+        </div>
+      )}
+
+      <style jsx>{`
+        div::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   );
 };
