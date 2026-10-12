@@ -43,6 +43,7 @@ const MENU_ITEMS = {
   ],
   ForStudents: [
     { label: 'Student Portal',     key: '/bnmemorial/studentportal' },
+    { label: 'Report Card',        key: '/bnmemorial/reportcard' },
     { label: 'Certificate',        key: '/bnmemorial/certificate' },
     { label: 'Payments',           key: '/bnmemorial/payments' },
     { label: 'Exam Results',       key: '/bnmemorial/studentportal' },
@@ -66,6 +67,7 @@ const MOBILE_ALL = [
   { label: 'CBSE Guidelines',  href: '/bnmemorial/cbseguidelines' },
   { label: 'Notice Board',     href: '/bnmemorial#notices' },
   { label: 'Student Portal',   href: '/bnmemorial/studentportal' },
+  { label: 'Report Card',      href: '/bnmemorial/reportcard' },
   { label: 'Payments',         href: '/bnmemorial/payments' },
   { label: 'Certificate',      href: '/bnmemorial/certificate' },
   { label: 'Blogs',            href: '/bnmemorial/blogs' },

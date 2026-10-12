@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<title>Primary Report Card — Sample</title>
+<style>
+  body { margin: 0; padding: 30px; font-family: 'Times New Roman', serif; background: #f0f0f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { max-width: 750px; margin: auto; background: #dbeafe; border: 4px double #1e40af; padding: 18px; }
+  .school-name { text-align: center; font-size: 16px; font-weight: bold; }
+  .school-addr { text-align: center; font-size: 11px; margin-top: 2px; }
+  .cert-title  { text-align: center; border: 2px solid #1e40af; display: inline-block; padding: 3px 30px; font-size: 14px; font-weight: bold; background: white; letter-spacing: 2px; margin: 6px 0; }
+  .session     { text-align: center; font-size: 12px; }
+  .divider     { border-bottom: 2px solid #1e40af; margin: 8px 0; }
+  table        { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .info td     { padding: 4px 2px; }
+  .info .ul    { border-bottom: 1px solid #333; min-width: 130px; display: inline-block; font-weight: bold; }
+  .marks th, .marks td { border: 1px solid #333; padding: 3px 5px; text-align: center; }
+  .marks th    { background: #1e40af; color: white; font-size: 10px; }
+  .marks th.subj, .marks td.subj { text-align: left; font-weight: bold; }
+  .marks tr:nth-child(odd)  td { background: #eff6ff; }
+  .marks tr:nth-child(even) td { background: #dbeafe; }
+  .marks .total-row td { background: #1e40af; color: white; font-weight: bold; }
+  .result-table td { border: 1px solid #1e40af; padding: 4px 8px; font-size: 11px; }
+  .sigs        { display: flex; justify-content: space-between; margin-top: 28px; padding-top: 8px; border-top: 1px solid #1e40af; }
+  .sig-item    { text-align: center; }
+  .sig-line    { border-bottom: 1px solid #333; width: 120px; margin-bottom: 3px; }
+  .sig-label   { font-size: 9px; }
+  .print-btn   { display: block; text-align: center; margin-bottom: 18px; }
+  .print-btn button { background: #1e40af; color: white; border: none; padding: 10px 32px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; }
+  @media print { .print-btn { display: none; } body { padding: 0; background: white; } }
+</style>
+</head>
+<body>
+
+<div class="print-btn">
+  <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="school-name">बी.एन. मेमोरियल हायर सेकेण्डरी स्कूल</div>
+  <div class="school-addr">9वाँ माइलस्टोन, बामरौली कटारा, फतेहाबाद रोड, आगरा — 282006</div>
+  <div style="text-align:center; margin-top:6px;">
+    <span class="cert-title">प्रगति-पत्र (Primary)</span>
+  </div>
+  <div class="session">शैक्षिक सत्र: 2025-26 &nbsp;|&nbsp; कक्षा: 4 &nbsp;|&nbsp; वर्ग: A</div>
+  <div class="divider"></div>
+
+  <!-- Student info -->
+  <table class="info" style="margin-bottom:10px;">
+    <tr>
+      <td style="width:30%">छात्र/छात्रा का नाम:</td>
+      <td><span class="ul">अंजली सिंह</span></td>
+      <td style="width:20%">अनुक्रमांक:</td>
+      <td><span class="ul">STU2025042</span></td>
+    </tr>
+    <tr>
+      <td>पिता का नाम:</td>
+      <td><span class="ul">राजेश कुमार सिंह</span></td>
+      <td>माता का नाम:</td>
+      <td><span class="ul">सुनीता सिंह</span></td>
+    </tr>
+    <tr>
+      <td>जन्मतिथि:</td>
+      <td><span class="ul">15/08/2016</span></td>
+      <td>छात्र पंजिका संख्या:</td>
+      <td><span class="ul">BNM/4/2025/042</span></td>
+    </tr>
+  </table>
+
+  <!-- Marks -->
+  <table class="marks" style="margin-bottom:10px; font-size:10px;">
+    <thead>
+      <tr>
+        <th class="subj" rowspan="2" style="width:22%">विषय</th>
+        <th colspan="2">प्रथम सत्र मौखिक (10)</th>
+        <th colspan="2">अर्द्धवार्षिक परीक्षा (30)</th>
+        <th colspan="2">द्वितीय सत्र मौखिक (10)</th>
+        <th colspan="2">वार्षिक परीक्षा (50)</th>
+        <th>योग (100)</th>
+        <th>ग्रेड</th>
+      </tr>
+      <tr style="background:#3b82f6;">
+        <th>पूर्णांक</th><th>प्राप्तांक</th>
+        <th>पूर्णांक</th><th>प्राप्तांक</th>
+        <th>पूर्णांक</th><th>प्राप्तांक</th>
+        <th>पूर्णांक</th><th>प्राप्तांक</th>
+        <th></th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="subj">हिन्दी</td>        <td>10</td><td>9</td>  <td>30</td><td>26</td><td>10</td><td>8</td>  <td>50</td><td>44</td><td><b>87</b></td><td><b>A</b></td></tr>
+      <tr><td class="subj">अंग्रेजी</td>      <td>10</td><td>8</td>  <td>30</td><td>24</td><td>10</td><td>9</td>  <td>50</td><td>41</td><td><b>82</b></td><td><b>A</b></td></tr>
+      <tr><td class="subj">गणित</td>          <td>10</td><td>10</td> <td>30</td><td>28</td><td>10</td><td>10</td> <td>50</td><td>47</td><td><b>95</b></td><td><b>A+</b></td></tr>
+      <tr><td class="subj">पर्यावरण अध्ययन</td><td>10</td><td>8</td><td>30</td><td>22</td><td>10</td><td>7</td>  <td>50</td><td>38</td><td><b>75</b></td><td><b>B+</b></td></tr>
+      <tr><td class="subj">कला/संगीत</td>    <td>10</td><td>9</td>  <td>30</td><td>25</td><td>10</td><td>9</td>  <td>50</td><td>42</td><td><b>85</b></td><td><b>A</b></td></tr>
+      <tr><td class="subj">कार्यानुभव</td>   <td>10</td><td>10</td> <td>30</td><td>27</td><td>10</td><td>10</td> <td>50</td><td>45</td><td><b>92</b></td><td><b>A+</b></td></tr>
+      <tr class="total-row">
+        <td class="subj">संपूर्ण योग</td>
+        <td>60</td><td>54</td><td>180</td><td>152</td><td>60</td><td>53</td><td>300</td><td>257</td>
+        <td><b>516</b></td><td><b>A</b></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Result -->
+  <table class="result-table" style="margin-bottom:10px;">
+    <tr>
+      <td>कक्षा में स्थान: <b>3</b></td>
+      <td>उपस्थिति: <b>94%</b></td>
+      <td>श्रेणी: <b>प्रथम</b></td>
+      <td>प्रतिशत: <b>86%</b></td>
+    </tr>
+    <tr>
+      <td colspan="4">उत्तीर्ण/प्रोन्नत/अनुत्तीर्ण: <b>उत्तीर्ण</b></td>
+    </tr>
+  </table>
+
+  <!-- Signatures -->
+  <div class="sigs">
+    <div class="sig-item"><div class="sig-line"></div><div class="sig-label">कक्षाध्यापक/कक्षाध्यापिका</div></div>
+    <div class="sig-item"><div class="sig-line"></div><div class="sig-label">जाँचकर्ता</div></div>
+    <div class="sig-item"><div class="sig-line"></div><div class="sig-label">हस्ताक्षर अभिभावक</div></div>
+    <div class="sig-item"><div class="sig-line"></div><div class="sig-label">प्रधानाचार्य/प्रधानाचार्या</div></div>
+  </div>
+
+</div>
+</body>
+</html>

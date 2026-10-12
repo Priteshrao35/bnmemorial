@@ -54,6 +54,7 @@ const MENUS = [
     label: 'ForStudents',
     children: [
       { label: 'Student Details',     path: '/studentDetails' },
+      { label: 'Report Card',         path: '/kamaladevirajjuprasad/reportcard' },
       { label: 'Certificate',         path: '/kamaladevirajjuprasad/certificate' },
       { label: 'Payments',            path: '/kamaladevirajjuprasad/payments' },
       { label: 'Admission Form',      path: '/admission' },

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<title>Sample Report Cards — B.N. Memorial School</title>
+<style>
+  body { margin: 0; padding: 32px 20px; font-family: Arial, sans-serif; background: #f1f5f9; }
+  h1   { text-align: center; color: #1e3a8a; font-size: 22px; margin-bottom: 4px; }
+  p.sub{ text-align: center; color: #64748b; font-size: 13px; margin-bottom: 28px; }
+  .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 900px; margin: auto; }
+  .card{ background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); text-decoration: none; display: block; transition: transform .15s, box-shadow .15s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+  .card-top    { height: 90px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .card-body   { padding: 16px; }
+  .card-body h2{ margin: 0 0 4px; font-size: 15px; }
+  .card-body p { margin: 0 0 12px; font-size: 12px; color: #64748b; line-height: 1.5; }
+  .badge       { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+  .blue-top    { background: #dbeafe; }
+  .yellow-top  { background: #fef3c7; }
+  .blue-badge  { background: #1e40af; color: white; }
+  .yellow-badge{ background: #92400e; color: white; }
+  .open-btn    { display: block; text-align: center; margin: 0 16px 16px; background: #1e40af; color: white; padding: 8px; border-radius: 10px; font-size: 12px; font-weight: bold; text-decoration: none; }
+  .open-btn:hover { background: #1e3a8a; }
+</style>
+</head>
+<body>
+
+<h1>📋 Sample Report Cards</h1>
+<p class="sub">B.N. Memorial School — Charo certificate types ke examples. Click karke dekhein aur print/PDF mein download karein.</p>
+
+<div class="grid">
+
+  <a class="card" href="primary.html" target="_blank">
+    <div class="card-top blue-top">📘</div>
+    <div class="card-body">
+      <h2>Primary Report Card</h2>
+      <p>कक्षा 1–5 · नीला रंग<br/>Example: कक्षा 4 · अंजली सिंह</p>
+      <span class="badge blue-badge">Blue Paper</span>
+    </div>
+    <span class="open-btn">👁️ Open &amp; Download</span>
+  </a>
+
+  <a class="card" href="junior.html" target="_blank">
+    <div class="card-top yellow-top">📙</div>
+    <div class="card-body">
+      <h2>Junior Report Card</h2>
+      <p>कक्षा 6–8 · पीला रंग<br/>Example: कक्षा 7 · रोहन वर्मा</p>
+      <span class="badge yellow-badge">Yellow Paper</span>
+    </div>
+    <span class="open-btn">👁️ Open &amp; Download</span>
+  </a>
+
+  <a class="card" href="highschool.html" target="_blank">
+    <div class="card-top yellow-top">📒</div>
+    <div class="card-body">
+      <h2>High School Report Card</h2>
+      <p>कक्षा 9–10 · पीला रंग<br/>Example: कक्षा 9 · विकास यादव</p>
+      <span class="badge yellow-badge">Yellow Paper</span>
+    </div>
+    <span class="open-btn">👁️ Open &amp; Download</span>
+  </a>
+
+  <a class="card" href="intermediate.html" target="_blank">
+    <div class="card-top blue-top">📗</div>
+    <div class="card-body">
+      <h2>Intermediate Report Card</h2>
+      <p>कक्षा 11–12 · नीला रंग<br/>Example: कक्षा 11 · प्रिया शर्मा</p>
+      <span class="badge blue-badge">Blue Paper</span>
+    </div>
+    <span class="open-btn">👁️ Open &amp; Download</span>
+  </a>
+
+</div>
+
+<p style="text-align:center; margin-top:32px; font-size:12px; color:#94a3b8;">
+  Real certificate generate karne ke liye:
+  <a href="/bnmemorial/reportcard" style="color:#1e40af; font-weight:bold;">BN Memorial Report Card</a> &nbsp;|&nbsp;
+  <a href="/kamaladevirajjuprasad/reportcard" style="color:#7c3aed; font-weight:bold;">KD School Report Card</a>
+</p>
+
+</body>
+</html>
